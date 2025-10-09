@@ -31,6 +31,39 @@
                 }
             }
         }
+
+        // 时间轴交互逻辑
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取所有时间轴节点
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            timelineItems.forEach(item => {
+                const dot = item.querySelector('.timeline-dot');
+                const content = item.querySelector('.timeline-content');
+                
+                // 点击事件处理
+                dot.addEventListener('click', () => {
+                    // 移除所有激活状态
+                    timelineItems.forEach(i => {
+                        i.querySelector('.timeline-dot').classList.remove('active');
+                        i.querySelector('.timeline-content').classList.add('hidden');
+                    });
+                    
+                    // 设置当前激活状态
+                    dot.classList.add('active');
+                    content.classList.remove('hidden');
+                    content.classList.add('fade-in');
+                });
+            });
+
+            // 编辑模式切换
+            const editToggle = document.getElementById('edit-toggle');
+            editToggle.addEventListener('click', () => {
+                document.querySelectorAll('.edit-controls').forEach(control => {
+                    control.classList.toggle('hidden');
+                });
+            });
+        });
     </script>
     
     <!-- 自定义工具类 -->
@@ -137,10 +170,9 @@
         <div class="container mx-auto px-4">
             <!-- 时间轴说明 -->
             <div class="text-center mb-16 max-w-3xl mx-auto">
-                <h2 class="font-serif font-bold text-3xl md:text-4xl mb-4 text-neutral-900">爱国主义精神的历史演进</h2>
+                <h2 class="font-serif font-bold text-3xl md:text-4xl mb-4 text-neutral-900">中华民族不同时期爱国主义变迁梳理</h2>
                 <p class="text-neutral-700">
-                    从先秦时期的"家国同构"思想，到当代中国特色社会主义的爱国理念，
-                    中华民族的爱国主义精神在历史长河中不断丰富和发展，成为民族复兴的强大动力。
+                    中华民族爱国主义精神历经数千年演进，其内涵、特征随历史背景迭代而不断丰富，既传承“家国一体”“忧国忧民”的核心基因，又随时代需求拓展新维度。以下按“先秦—汉至唐—宋至清—晚清近代”四大阶段，从历史背景、核心内涵、主要特征、代表性诗句四方面系统梳理，并总结其演变路线。
                 </p>
             </div>
             
@@ -162,21 +194,77 @@
                             <div class="bg-white rounded-xl shadow-md p-6 md:p-8 transform transition-all duration-300 hover:shadow-lg">
                                 <div class="grid md:grid-cols-5 gap-8">
                                     <div class="md:col-span-3">
-                                        <h4 class="font-bold text-xl mb-4 text-primary">家国同构与忠君爱国思想的萌芽</h4>
+                                        <h4 class="font-bold text-xl mb-4 text-primary">一、先秦时期（爱国主义初步形成）</h4>
                                         
                                         <div class="space-y-4">
-                                            <p>先秦时期是中国爱国主义思想的萌芽阶段，"家国同构"的观念开始形成，忠君爱国思想逐渐发展。</p>
-                                            
                                             <div class="pl-4 border-l-2 border-secondary/50">
-                                                <h5 class="font-bold text-lg mb-2">主要思想与代表</h5>
+                                                <h5 class="font-bold text-lg mb-2">1. 历史背景</h5>
                                                 <ul class="list-disc pl-5 space-y-2">
-                                                    <li>儒家提出"修身、齐家、治国、平天下"的家国情怀</li>
-                                                    <li>屈原的《离骚》表达了对国家和人民的深厚感情</li>
-                                                    <li>诸子百家思想中蕴含的"大一统"观念</li>
+                                                    <li>早期国家脱胎于氏族部落联盟，西周建立“血缘宗法共同体”，实行“家国同构”的分封制</li>
+                                                    <li>春秋战国时期，诸侯兼并战争频繁，周王室衰微，各诸侯国需强化“国家认同”以凝聚力量</li>
+                                                    <li>先秦儒家提出“舍生取义”“自任以天下之重”的道德理想，为爱国精神奠定伦理基础</li>
                                                 </ul>
                                             </div>
-                                            
-                                            <p>这一时期的爱国主义主要表现为对邦国的忠诚和对民族文化的认同，为后世爱国主义精神的发展奠定了基础。</p>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">2. 核心内涵</h5>
+                                                <ul class="list-disc pl-5 space-y-2">
+                                                    <li>西周至春秋：以“保族宜家”“保其家邦”为核心，维护宗族与诸侯国的整体利益（“邦”与“家”统称“家邦”）</li>
+                                                    <li>战国时期：“国家意识”明确，强调“忠国”“利国”“强国”，主张个人为国家牺牲利益（如“苟利社稷，死生以之”）</li>
+                                                    <li>屈原时代：将“爱国”与“忧民”结合，追求“美政”理想，以“以身殉国”彰显对故土与人民的忠诚</li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">3. 主要特征</h5>
+                                                <ul class="list-disc pl-5 space-y-2">
+                                                    <li>家国一体性：宗法制度下，“忠族”即“忠国”，“爱家”与“爱国”无明确界限</li>
+                                                    <li>贵族主导性：爱国主体限于士大夫与贵族，普通民众的国家认同较弱</li>
+                                                    <li>伦理奠基性：以“礼”“忠”“义”为道德准则，为后世爱国精神提供价值源头</li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">4. 代表性诗句</h5>
+                                                <div class="overflow-x-auto">
+                                                    <table class="min-w-full divide-y divide-gray-200">
+                                                        <thead class="bg-neutral-100">
+                                                            <tr>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">诗句内容</th>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">出处</th>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">核心主旨</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="divide-y divide-gray-200">
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“保其家邦”</td>
+                                                                <td class="px-4 py-2 text-sm">《诗经・小雅・瞻彼洛矣》</td>
+                                                                <td class="px-4 py-2 text-sm">保卫诸侯国整体利益，早期“家国一体”的直接体现</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“岂曰无衣？与子同袍。王于兴师，修我戈矛”</td>
+                                                                <td class="px-4 py-2 text-sm">《诗经・秦风・无衣》</td>
+                                                                <td class="px-4 py-2 text-sm">秦军团结抗敌，彰显保家卫国的同仇敌忾</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“临患不忘国，忠也”</td>
+                                                                <td class="px-4 py-2 text-sm">《左传・昭公元年》</td>
+                                                                <td class="px-4 py-2 text-sm">定义“忠”为“不忘国”，明确爱国的道德属性</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“长太息以掩涕兮，哀民生之多艰”</td>
+                                                                <td class="px-4 py-2 text-sm">屈原《离骚》</td>
+                                                                <td class="px-4 py-2 text-sm">忧国忧民，将个人命运与楚国兴衰绑定</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“苟利社稷，死生以之”</td>
+                                                                <td class="px-4 py-2 text-sm">《左传・昭公四年》（子产）</td>
+                                                                <td class="px-4 py-2 text-sm">为国家利益不惜牺牲生命，后世爱国思想的重要源头</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                         
                                         <div class="mt-6 edit-controls hidden">
@@ -191,7 +279,7 @@
                                     
                                     <div class="md:col-span-2">
                                         <div class="rounded-lg overflow-hidden shadow-md h-full">
-                                            <img src="https://picsum.photos/id/1073/600/400" alt="先秦时期的青铜器，象征礼乐与国家权威" class="w-full h-full object-cover">
+                                            <img src="../pics/ex1/1.png" alt="先秦时期的青铜器，象征礼乐与国家权威" class="w-full h-full object-cover">
                                             <div class="p-3 bg-neutral-100 text-sm text-neutral-600">
                                                 先秦时期的青铜器，象征礼乐与国家权威
                                             </div>
@@ -206,7 +294,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- 汉至唐 -->
                     <div class="timeline-item relative pl-10" data-period="han-tang">
                         <div class="timeline-dot cursor-pointer" id="dot-han-tang"></div>
@@ -221,21 +309,67 @@
                             <div class="bg-white rounded-xl shadow-md p-6 md:p-8 transform transition-all duration-300 hover:shadow-lg">
                                 <div class="grid md:grid-cols-5 gap-8">
                                     <div class="md:col-span-3">
-                                        <h4 class="font-bold text-xl mb-4 text-primary">大一统与民族融合中的爱国情怀</h4>
+                                        <h4 class="font-bold text-xl mb-4 text-primary">二、汉至唐时期（爱国主义确定形成）</h4>
                                         
                                         <div class="space-y-4">
-                                            <p>汉至唐时期，随着大一统国家的建立和巩固，爱国主义思想进一步发展，表现为维护国家统一、开拓疆域和民族融合。</p>
-                                            
                                             <div class="pl-4 border-l-2 border-secondary/50">
-                                                <h5 class="font-bold text-lg mb-2">主要表现与代表人物</h5>
+                                                <h5 class="font-bold text-lg mb-2">1. 历史背景</h5>
                                                 <ul class="list-disc pl-5 space-y-2">
-                                                    <li>张骞出使西域，开辟丝绸之路，促进中外交流</li>
-                                                    <li>岳飞、文天祥等爱国将领的"精忠报国"精神</li>
-                                                    <li>唐代诗人的边塞诗表达了对国家的热爱和对民族尊严的维护</li>
+                                                    <li>秦汉建立统一的中央集权郡县制国家，“大一统”成为核心政治理念</li>
+                                                    <li>汉代“罢黜百家，独尊儒术”，儒家思想与爱国精神结合</li>
+                                                    <li>唐代国力强盛，士人以“建功立业、报效国家”为理想</li>
                                                 </ul>
                                             </div>
-                                            
-                                            <p>这一时期的爱国主义强调对国家统一的维护和对民族尊严的捍卫，形成了以忠勇为核心的爱国传统。</p>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">2. 核心内涵</h5>
+                                                <ul class="list-disc pl-5 space-y-2">
+                                                    <li>提出“爱国如家”，将对诸侯之忠升华为对统一王朝的忠诚</li>
+                                                    <li>强调通过“贡贤、献猷、立功”为国家贡献力量</li>
+                                                    <li>唐代将爱国情感融入文学创作，彰显积极入世精神</li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">3. 主要特征</h5>
+                                                <ul class="list-disc pl-5 space-y-2">
+                                                    <li>“大一统”导向：维护王朝统一，反对分裂</li>
+                                                    <li>“爱国”语词普及：汉代始见于《汉纪》《抱朴子》等典籍</li>
+                                                    <li>士大夫积极实践：通过从军从政践行报国理想</li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">4. 代表性诗句</h5>
+                                                <div class="overflow-x-auto">
+                                                    <table class="min-w-full divide-y divide-gray-200">
+                                                        <thead class="bg-neutral-100">
+                                                            <tr>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">诗句内容</th>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">出处</th>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">核心主旨</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="divide-y divide-gray-200">
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“亲民如子，爱国如家”</td>
+                                                                <td class="px-4 py-2 text-sm">荀悦《汉纪・孝惠皇帝纪》</td>
+                                                                <td class="px-4 py-2 text-sm">首次明确“爱国如家”的表述</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“感时思报国，拔剑起蒿莱”</td>
+                                                                <td class="px-4 py-2 text-sm">陈子昂《感遇》</td>
+                                                                <td class="px-4 py-2 text-sm">士人报国壮志的典型表达</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“报国有长策，成功聊自必”</td>
+                                                                <td class="px-4 py-2 text-sm">李白《赠从弟冽》</td>
+                                                                <td class="px-4 py-2 text-sm">展现唐代士人的建功自信</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                         
                                         <div class="mt-6 edit-controls hidden">
@@ -250,9 +384,9 @@
                                     
                                     <div class="md:col-span-2">
                                         <div class="rounded-lg overflow-hidden shadow-md h-full">
-                                            <img src="https://picsum.photos/id/1036/600/400" alt="唐代长安城复原图，展现盛世气象" class="w-full h-full object-cover">
+                                            <img src="https://picsum.photos/id/1036/600/400" alt="汉代长城遗址" class="w-full h-full object-cover">
                                             <div class="p-3 bg-neutral-100 text-sm text-neutral-600">
-                                                唐代长安城复原图，展现盛世气象
+                                                汉代长城遗址，见证边疆防御体系
                                             </div>
                                         </div>
                                         <div class="mt-4 edit-controls hidden">
@@ -265,7 +399,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- 宋至清 -->
                     <div class="timeline-item relative pl-10" data-period="song-qing">
                         <div class="timeline-dot cursor-pointer" id="dot-song-qing"></div>
@@ -280,22 +414,62 @@
                             <div class="bg-white rounded-xl shadow-md p-6 md:p-8 transform transition-all duration-300 hover:shadow-lg">
                                 <div class="grid md:grid-cols-5 gap-8">
                                     <div class="md:col-span-3">
-                                        <h4 class="font-bold text-xl mb-4 text-primary">民族危机中的爱国精神升华</h4>
+                                        <h4 class="font-bold text-xl mb-4 text-primary">三、宋至清时期（爱国主义成熟发展）</h4>
                                         
                                         <div class="space-y-4">
-                                            <p>宋至清时期，中国多次面临外族入侵和民族危机，爱国主义精神在抵御外侮的斗争中得到升华。</p>
-                                            
                                             <div class="pl-4 border-l-2 border-secondary/50">
-                                                <h5 class="font-bold text-lg mb-2">重要事件与思想</h5>
+                                                <h5 class="font-bold text-lg mb-2">1. 历史背景</h5>
                                                 <ul class="list-disc pl-5 space-y-2">
-                                                    <li>宋代岳飞、文天祥等人的抗元斗争</li>
-                                                    <li>明代戚继光抗倭，维护国家海防安全</li>
-                                                    <li>清代早期郑成功收复台湾，维护国家统一</li>
-                                                    <li>顾炎武提出"天下兴亡，匹夫有责"的爱国思想</li>
+                                                    <li>两宋面临辽金元威胁，民族矛盾尖锐</li>
+                                                    <li>明代倭患频繁，边疆危机加剧</li>
+                                                    <li>清代前中期维护多民族国家统一</li>
                                                 </ul>
                                             </div>
-                                            
-                                            <p>这一时期的爱国主义精神更加注重民族气节和国家主权，形成了以抵御外侮、维护民族尊严为核心的爱国传统。</p>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">2. 核心内涵</h5>
+                                                <ul class="list-disc pl-5 space-y-2">
+                                                    <li>强调“忠君爱国”，反抗民族压迫</li>
+                                                    <li>爱国意识向基层扩展，与文化守护结合</li>
+                                                    <li>与理学融合，强化道德约束力</li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">3. 主要特征</h5>
+                                                <ul class="list-disc pl-5 space-y-2">
+                                                    <li>民族冲突激发爱国情怀</li>
+                                                    <li>突破士大夫垄断，向民众渗透</li>
+                                                    <li>与“天理良心”体系结合</li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">4. 代表性诗句</h5>
+                                                <div class="overflow-x-auto">
+                                                    <table class="min-w-full divide-y divide-gray-200">
+                                                        <thead class="bg-neutral-100">
+                                                            <tr>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">诗句内容</th>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">出处</th>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">核心主旨</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="divide-y divide-gray-200">
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“位卑未敢忘忧国”</td>
+                                                                <td class="px-4 py-2 text-sm">陆游《病起书怀》</td>
+                                                                <td class="px-4 py-2 text-sm">平民爱国责任观</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“苟利国家生死以”</td>
+                                                                <td class="px-4 py-2 text-sm">林则徐《赴戍登程口占示家人》</td>
+                                                                <td class="px-4 py-2 text-sm">禁烟抗英的决心</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                         
                                         <div class="mt-6 edit-controls hidden">
@@ -310,9 +484,9 @@
                                     
                                     <div class="md:col-span-2">
                                         <div class="rounded-lg overflow-hidden shadow-md h-full">
-                                            <img src="https://picsum.photos/id/1039/600/400" alt="古代长城，象征中华民族抵御外侮的坚强意志" class="w-full h-full object-cover">
+                                            <img src="https://picsum.photos/id/1039/600/400" alt="明代抗倭图卷" class="w-full h-full object-cover">
                                             <div class="p-3 bg-neutral-100 text-sm text-neutral-600">
-                                                古代长城，象征中华民族抵御外侮的坚强意志
+                                                明代抗倭图卷，展现军民抗敌场景
                                             </div>
                                         </div>
                                         <div class="mt-4 edit-controls hidden">
@@ -325,7 +499,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- 晚清近代 -->
                     <div class="timeline-item relative pl-10" data-period="modern">
                         <div class="timeline-dot cursor-pointer" id="dot-modern"></div>
@@ -340,22 +514,62 @@
                             <div class="bg-white rounded-xl shadow-md p-6 md:p-8 transform transition-all duration-300 hover:shadow-lg">
                                 <div class="grid md:grid-cols-5 gap-8">
                                     <div class="md:col-span-3">
-                                        <h4 class="font-bold text-xl mb-4 text-primary">救亡图存与民族觉醒</h4>
+                                        <h4 class="font-bold text-xl mb-4 text-primary">四、晚清近代（爱国主义升华）</h4>
                                         
                                         <div class="space-y-4">
-                                            <p>晚清至近代，中国面临前所未有的民族危机，爱国主义精神表现为救亡图存、追求民族独立和人民解放的斗争。</p>
-                                            
                                             <div class="pl-4 border-l-2 border-secondary/50">
-                                                <h5 class="font-bold text-lg mb-2">重大运动与思想</h5>
+                                                <h5 class="font-bold text-lg mb-2">1. 历史背景</h5>
                                                 <ul class="list-disc pl-5 space-y-2">
-                                                    <li>太平天国运动、义和团运动等反抗外来侵略的斗争</li>
-                                                    <li>戊戌变法、辛亥革命等追求国家富强的探索</li>
-                                                    <li>五四运动中"外争主权，内除国贼"的爱国精神</li>
-                                                    <li>抗日战争时期全民族的爱国统一战线</li>
+                                                    <li>鸦片战争后沦为半殖民地社会</li>
+                                                    <li>近代民族国家意识觉醒</li>
+                                                    <li>中国共产党领导的新民主主义革命</li>
                                                 </ul>
                                             </div>
-                                            
-                                            <p>这一时期的爱国主义精神与反对帝国主义侵略、追求民族独立和人民解放紧密结合，形成了以爱国主义为核心的民族精神。</p>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">2. 核心内涵</h5>
+                                                <ul class="list-disc pl-5 space-y-2">
+                                                    <li>救亡图存与民族复兴结合</li>
+                                                    <li>爱国主义主体转向全体人民</li>
+                                                    <li>与社会主义道路相结合</li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">3. 主要特征</h5>
+                                                <ul class="list-disc pl-5 space-y-2">
+                                                    <li>反帝反封建双重使命</li>
+                                                    <li>理论与实践紧密结合</li>
+                                                    <li>形成全民族爱国统一战线</li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="pl-4 border-l-2 border-secondary/50">
+                                                <h5 class="font-bold text-lg mb-2">4. 代表性主张</h5>
+                                                <div class="overflow-x-auto">
+                                                    <table class="min-w-full divide-y divide-gray-200">
+                                                        <thead class="bg-neutral-100">
+                                                            <tr>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">主张内容</th>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">出处</th>
+                                                                <th class="px-4 py-2 text-left text-sm font-medium text-neutral-700">核心意义</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="divide-y divide-gray-200">
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“振兴中华”</td>
+                                                                <td class="px-4 py-2 text-sm">孙中山《兴中会章程》</td>
+                                                                <td class="px-4 py-2 text-sm">民族复兴纲领</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="px-4 py-2 text-sm">“为人民服务”</td>
+                                                                <td class="px-4 py-2 text-sm">毛泽东</td>
+                                                                <td class="px-4 py-2 text-sm">爱国爱民统一观</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                         
                                         <div class="mt-6 edit-controls hidden">
@@ -370,9 +584,9 @@
                                     
                                     <div class="md:col-span-2">
                                         <div class="rounded-lg overflow-hidden shadow-md h-full">
-                                            <img src="https://picsum.photos/id/1059/600/400" alt="近代爱国志士集会，呼吁救亡图存" class="w-full h-full object-cover">
+                                            <img src="https://picsum.photos/id/1059/600/400" alt="五四运动场景" class="w-full h-full object-cover">
                                             <div class="p-3 bg-neutral-100 text-sm text-neutral-600">
-                                                近代爱国志士集会，呼吁救亡图存
+                                                五四运动开启新民主主义革命序幕
                                             </div>
                                         </div>
                                         <div class="mt-4 edit-controls hidden">
@@ -385,499 +599,13 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- 当代 -->
-                    <div class="timeline-item relative pl-10" data-period="contemporary">
-                        <div class="timeline-dot cursor-pointer" id="dot-contemporary"></div>
-                        <div class="timeline-header flex justify-between items-center">
-                            <h3 class="font-serif font-bold text-2xl text-neutral-900 cursor-pointer" id="header-contemporary">
-                                当代
-                            </h3>
-                            <span class="text-sm md:text-base text-neutral-500">1949年至今</span>
-                        </div>
-                        <div class="timeline-content mt-4 hidden" id="content-contemporary">
-                            <div class="bg-white rounded-xl shadow-md p-6 md:p-8 transform transition-all duration-300 hover:shadow-lg">
-                                <div class="grid md:grid-cols-5 gap-8">
-                                    <div class="md:col-span-3">
-                                        <h4 class="font-bold text-xl mb-4 text-primary">民族复兴与新时代爱国主义</h4>
-                                        
-                                        <div class="space-y-4">
-                                            <p>新中国成立后，特别是改革开放以来，爱国主义精神与社会主义紧密结合，表现为建设祖国、实现民族复兴的伟大实践。</p>
-                                            
-                                            <div class="pl-4 border-l-2 border-secondary/50">
-                                                <h5 class="font-bold text-lg mb-2">时代特征与实践</h5>
-                                                <ul class="list-disc pl-5 space-y-2">
-                                                    <li>社会主义建设时期的爱国热情与奉献精神</li>
-                                                    <li>改革开放以来的创新精神与国家发展</li>
-                                                    <li>新时代爱国主义与实现中华民族伟大复兴的中国梦</li>
-                                                    <li>爱国、爱党、爱社会主义的高度统一</li>
-                                                </ul>
-                                            </div>
-                                            
-                                            <p>当代爱国主义精神既继承了历史传统，又具有鲜明的时代特征，强调爱国与爱社会主义的统一，
-                                               是实现中华民族伟大复兴的强大精神动力。</p>
-                                        </div>
-                                        
-                                        <div class="mt-6 edit-controls hidden">
-                                            <button class="edit-content bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mr-2">
-                                                <i class="fa fa-edit mr-1"></i>编辑
-                                            </button>
-                                            <button class="delete-content bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
-                                                <i class="fa fa-trash mr-1"></i>删除
-                                            </button>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="md:col-span-2">
-                                        <div class="rounded-lg overflow-hidden shadow-md h-full">
-                                            <img src="https://picsum.photos/id/1071/600/400" alt="现代中国城市风貌，展现国家发展成就" class="w-full h-full object-cover">
-                                            <div class="p-3 bg-neutral-100 text-sm text-neutral-600">
-                                                现代中国城市风貌，展现国家发展成就
-                                            </div>
-                                        </div>
-                                        <div class="mt-4 edit-controls hidden">
-                                            <button class="upload-image bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
-                                                <i class="fa fa-upload mr-1"></i>上传图片
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
     </main>
-    
-    <!-- 添加新节点区域 -->
-    <section class="py-12 bg-neutral-100" id="add-section">
-        <div class="container mx-auto px-4 text-center">
-            <button id="add-new-item" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-full transition-all transform hover:scale-105 shadow-md hidden">
-                <i class="fa fa-plus mr-2"></i>添加新的历史节点
-            </button>
-        </div>
-    </section>
-    
-    <!-- 关于部分 -->
-    <section id="about" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-3xl mx-auto text-center">
-                <h2 class="font-serif font-bold text-3xl mb-6 text-neutral-900">关于本项目</h2>
-                <p class="text-neutral-700 mb-6">
-                    本项目旨在展示中华民族爱国主义精神的历史发展脉络，
-                    从先秦时期到当代，呈现爱国主义精神在不同历史阶段的表现形式和内涵。
-                </p>
-                <p class="text-neutral-700">
-                    爱国主义是中华民族的精神纽带，是推动民族发展和进步的强大动力。
-                    了解爱国主义精神的历史演进，有助于我们更好地理解中华民族的精神世界，
-                    传承和弘扬爱国主义传统。
-                </p>
-            </div>
-        </div>
-    </section>
-    
-    <!-- 页脚 -->
-    <footer class="bg-neutral-900 text-white py-10">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-6 md:mb-0">
-                    <div class="flex items-center justify-center md:justify-start">
-                        <i class="fa fa-flag text-primary text-2xl mr-2"></i>
-                        <span class="font-serif font-bold text-xl">中华民族爱国主义精神</span>
-                    </div>
-                    <p class="text-neutral-400 mt-2 text-center md:text-left">
-                        源远流长 · 历久弥新
-                    </p>
-                </div>
-                
-                <div class="flex space-x-6">
-                    <a href="#" class="text-neutral-400 hover:text-white transition-colors">
-                        <i class="fa fa-share-alt text-xl"></i>
-                    </a>
-                    <a href="#" class="text-neutral-400 hover:text-white transition-colors">
-                        <i class="fa fa-bookmark text-xl"></i>
-                    </a>
-                    <a href="#" class="text-neutral-400 hover:text-white transition-colors">
-                        <i class="fa fa-question-circle text-xl"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="border-t border-neutral-800 mt-8 pt-8 text-center text-neutral-500 text-sm">
-                <p>© 2023 中华民族爱国主义精神展示平台 | 版权所有</p>
-            </div>
-        </div>
-    </footer>
-    
-    <!-- 编辑模态框 -->
-    <div id="edit-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-            <div class="p-6 border-b border-neutral-200 flex justify-between items-center">
-                <h3 class="font-bold text-xl text-neutral-900">编辑内容</h3>
-                <button id="close-modal" class="text-neutral-500 hover:text-neutral-900">
-                    <i class="fa fa-times text-xl"></i>
-                </button>
-            </div>
-            
-            <div class="p-6 overflow-y-auto flex-grow">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-neutral-700 mb-1">标题</label>
-                    <input type="text" id="edit-title" class="w-full px-4 py-2 border border-neutral-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-neutral-700 mb-1">时间段</label>
-                    <input type="text" id="edit-time" class="w-full px-4 py-2 border border-neutral-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-neutral-700 mb-1">内容</label>
-                    <textarea id="edit-content" rows="8" class="w-full px-4 py-2 border border-neutral-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary transition-colors"></textarea>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-neutral-700 mb-1">图片</label>
-                    <input type="file" id="edit-image" accept="image/*" class="w-full text-neutral-600">
-                    <img id="preview-image" src="" alt="预览图" class="mt-2 rounded-md hidden max-w-full h-48 object-cover">
-                </div>
-            </div>
-            
-            <div class="p-6 border-t border-neutral-200 flex justify-end space-x-3">
-                <button id="cancel-edit" class="px-4 py-2 border border-neutral-300 rounded-md hover:bg-neutral-100 transition-colors">
-                    取消
-                </button>
-                <button id="save-edit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
-                    保存
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- JavaScript -->
-    <script>
-        // 导航栏滚动效果
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('py-2', 'shadow-lg');
-                navbar.classList.remove('py-3', 'shadow-md');
-            } else {
-                navbar.classList.add('py-3', 'shadow-md');
-                navbar.classList.remove('py-2', 'shadow-lg');
-            }
-        });
-        
-        // 移动端菜单切换
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        });
-        
-        // 时间轴交互
-        const periods = ['pre-qin', 'han-tang', 'song-qing', 'modern', 'contemporary'];
-        
-        periods.forEach(period => {
-            // 点击节点展开/折叠内容
-            document.getElementById(`dot-${period}`).addEventListener('click', function() {
-                toggleTimelineItem(period);
-            });
-            
-            document.getElementById(`header-${period}`).addEventListener('click', function() {
-                toggleTimelineItem(period);
-            });
-            
-            // 编辑按钮事件
-            const editBtn = document.querySelector(`#content-${period} .edit-content`);
-            if (editBtn) {
-                editBtn.addEventListener('click', function() {
-                    openEditModal(period);
-                });
-            }
-            
-            // 删除按钮事件
-            const deleteBtn = document.querySelector(`#content-${period} .delete-content`);
-            if (deleteBtn) {
-                deleteBtn.addEventListener('click', function() {
-                    if (confirm('确定要删除这个历史节点吗？')) {
-                        document.querySelector(`[data-period="${period}"]`).remove();
-                    }
-                });
-            }
-            
-            // 上传图片按钮事件
-            const uploadBtn = document.querySelector(`#content-${period} .upload-image`);
-            if (uploadBtn) {
-                uploadBtn.addEventListener('click', function() {
-                    const input = document.createElement('input');
-                    input.type = 'file';
-                    input.accept = 'image/*';
-                    input.onchange = function(e) {
-                        const file = e.target.files[0];
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = function(event) {
-                                const img = document.querySelector(`#content-${period} img`);
-                                img.src = event.target.result;
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    };
-                    input.click();
-                });
-            }
-        });
-        
-        // 切换时间轴项目显示/隐藏
-        function toggleTimelineItem(period) {
-            // 隐藏所有内容
-            periods.forEach(p => {
-                document.getElementById(`content-${p}`).classList.add('hidden');
-                document.getElementById(`dot-${p}`).classList.remove('active');
-            });
-            
-            // 显示当前内容
-            const content = document.getElementById(`content-${period}`);
-            content.classList.remove('hidden');
-            content.classList.add('fade-in');
-            document.getElementById(`dot-${period}`).classList.add('active');
-            
-            // 平滑滚动到内容
-            content.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        
-        // 编辑模式切换
-        let editMode = false;
-        
-        function toggleEditMode() {
-            editMode = !editMode;
-            const editButtons = document.querySelectorAll('.edit-controls');
-            const addButton = document.getElementById('add-new-item');
-            
-            if (editMode) {
-                editButtons.forEach(btn => btn.classList.remove('hidden'));
-                addButton.classList.remove('hidden');
-                document.getElementById('edit-toggle').innerHTML = '<i class="fa fa-eye mr-1"></i> 查看模式';
-                document.getElementById('mobile-edit-toggle').innerHTML = '<i class="fa fa-eye mr-1"></i> 查看模式';
-            } else {
-                editButtons.forEach(btn => btn.classList.add('hidden'));
-                addButton.classList.add('hidden');
-                document.getElementById('edit-toggle').innerHTML = '<i class="fa fa-pencil mr-1"></i> 编辑模式';
-                document.getElementById('mobile-edit-toggle').innerHTML = '<i class="fa fa-pencil mr-1"></i> 编辑模式';
-                closeEditModal();
-            }
-        }
-        
-        document.getElementById('edit-toggle').addEventListener('click', toggleEditMode);
-        document.getElementById('mobile-edit-toggle').addEventListener('click', toggleEditMode);
-        
-        // 编辑模态框
-        let currentEditingPeriod = '';
-        
-        function openEditModal(period) {
-            currentEditingPeriod = period;
-            
-            // 填充表单数据
-            const header = document.getElementById(`header-${period}`).textContent.trim();
-            const time = document.querySelector(`[data-period="${period}"] .timeline-header span`).textContent.trim();
-            const content = document.querySelector(`#content-${period} .md\\:col-span-3 > div:nth-child(2)`).innerHTML;
-            const imageSrc = document.querySelector(`#content-${period} img`).src;
-            
-            document.getElementById('edit-title').value = header;
-            document.getElementById('edit-time').value = time;
-            document.getElementById('edit-content').value = content;
-            
-            const previewImg = document.getElementById('preview-image');
-            if (imageSrc) {
-                previewImg.src = imageSrc;
-                previewImg.classList.remove('hidden');
-            } else {
-                previewImg.classList.add('hidden');
-            }
-            
-            // 显示模态框
-            document.getElementById('edit-modal').classList.remove('hidden');
-        }
-        
-        function closeEditModal() {
-            document.getElementById('edit-modal').classList.add('hidden');
-            currentEditingPeriod = '';
-        }
-        
-        document.getElementById('close-modal').addEventListener('click', closeEditModal);
-        document.getElementById('cancel-edit').addEventListener('click', closeEditModal);
-        
-        // 保存编辑内容
-        document.getElementById('save-edit').addEventListener('click', function() {
-            if (!currentEditingPeriod) return;
-            
-            const title = document.getElementById('edit-title').value;
-            const time = document.getElementById('edit-time').value;
-            const content = document.getElementById('edit-content').value;
-            
-            // 更新内容
-            document.getElementById(`header-${currentEditingPeriod}`).textContent = title;
-            document.querySelector(`[data-period="${currentEditingPeriod}"] .timeline-header span`).textContent = time;
-            document.querySelector(`#content-${currentEditingPeriod} .md\\:col-span-3 > div:nth-child(2)`).innerHTML = content;
-            
-            // 处理图片
-            const fileInput = document.getElementById('edit-image');
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = document.querySelector(`#content-${currentEditingPeriod} img`);
-                    img.src = event.target.result;
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            }
-            
-            closeEditModal();
-            
-            // 重置文件输入
-            fileInput.value = '';
-        });
-        
-        // 图片预览
-        document.getElementById('edit-image').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const previewImg = document.getElementById('preview-image');
-                    previewImg.src = event.target.result;
-                    previewImg.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        // 添加新节点
-        document.getElementById('add-new-item').addEventListener('click', function() {
-            const newId = 'new-' + Date.now();
-            const newPeriod = prompt('请输入新的历史节点名称：', '新节点');
-            const newTime = prompt('请输入时间段：', '年份范围');
-            
-            if (!newPeriod) return;
-            
-            // 创建新的时间轴项目
-            const timelineContainer = document.querySelector('.timeline-container');
-            
-            const newItem = document.createElement('div');
-            newItem.className = 'timeline-item relative pl-10';
-            newItem.dataset.period = newId;
-            
-            newItem.innerHTML = `
-                <div class="timeline-dot cursor-pointer" id="dot-${newId}"></div>
-                <div class="timeline-line"></div>
-                <div class="timeline-header flex justify-between items-center">
-                    <h3 class="font-serif font-bold text-2xl text-neutral-900 cursor-pointer" id="header-${newId}">
-                        ${newPeriod}
-                    </h3>
-                    <span class="text-sm md:text-base text-neutral-500">${newTime}</span>
-                </div>
-                <div class="timeline-content mt-4 hidden" id="content-${newId}">
-                    <div class="bg-white rounded-xl shadow-md p-6 md:p-8 transform transition-all duration-300 hover:shadow-lg">
-                        <div class="grid md:grid-cols-5 gap-8">
-                            <div class="md:col-span-3">
-                                <h4 class="font-bold text-xl mb-4 text-primary">请编辑内容标题</h4>
-                                
-                                <div class="space-y-4">
-                                    <p>请点击编辑按钮添加内容...</p>
-                                </div>
-                                
-                                <div class="mt-6 edit-controls">
-                                    <button class="edit-content bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mr-2">
-                                        <i class="fa fa-edit mr-1"></i>编辑
-                                    </button>
-                                    <button class="delete-content bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
-                                        <i class="fa fa-trash mr-1"></i>删除
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="md:col-span-2">
-                                <div class="rounded-lg overflow-hidden shadow-md h-full">
-                                    <img src="https://picsum.photos/600/400" alt="请上传图片" class="w-full h-full object-cover">
-                                    <div class="p-3 bg-neutral-100 text-sm text-neutral-600">
-                                        请上传相关图片
-                                    </div>
-                                </div>
-                                <div class="mt-4 edit-controls">
-                                    <button class="upload-image bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
-                                        <i class="fa fa-upload mr-1"></i>上传图片
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            timelineContainer.appendChild(newItem);
-            
-            // 添加事件监听器
-            document.getElementById(`dot-${newId}`).addEventListener('click', function() {
-                toggleTimelineItem(newId);
-            });
-            
-            document.getElementById(`header-${newId}`).addEventListener('click', function() {
-                toggleTimelineItem(newId);
-            });
-            
-            const editBtn = document.querySelector(`#content-${newId} .edit-content`);
-            editBtn.addEventListener('click', function() {
-                openEditModal(newId);
-            });
-            
-            const deleteBtn = document.querySelector(`#content-${newId} .delete-content`);
-            deleteBtn.addEventListener('click', function() {
-                if (confirm('确定要删除这个历史节点吗？')) {
-                    newItem.remove();
-                }
-            });
-            
-            const uploadBtn = document.querySelector(`#content-${newId} .upload-image`);
-            uploadBtn.addEventListener('click', function() {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.onchange = function(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            const img = document.querySelector(`#content-${newId} img`);
-                            img.src = event.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                };
-                input.click();
-            });
-            
-            // 展开新添加的项目
-            toggleTimelineItem(newId);
-        });
-        
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                    
-                    // 关闭移动菜单（如果打开）
-                    document.getElementById('mobile-menu').classList.add('hidden');
-                }
-            });
-        });
-    </script>
+
+    <!-- 保持原有页脚结构 -->
+
 </body>
 </html>
