@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>探寻中国之路·一个青年革命者的思考</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "楷体", "SimKai", serif; background: #f0ebe6; color: #333; line-height: 1.6; }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; min-height: 100vh; position: relative; }
+        /* 首页样式 */
+        .start-page { padding: 50px 0; text-align: center; }
+        .title { font-size: 2.5rem; color: #8b2323; margin-bottom: 30px; text-shadow: 2px 2px 3px rgba(0,0,0,0.1); }
+        .intro { font-size: 1.1rem; margin: 20px 0; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .name-input { padding: 10px 15px; font-size: 1rem; border: 2px solid #8b4513; border-radius: 8px; margin: 20px 0; width: 300px; }
+        .btn { padding: 12px 30px; background: #8b2323; color: #fff; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; font-family: "楷体"; }
+        .btn:hover { background: #6a1b1b; transform: translateY(-2px); }
+        /* 场景页面样式 */
+        .scene-page { display: none; padding: 30px 0; }
+        .scene-bg { width: 100%; height: 400px; border-radius: 12px; overflow: hidden; margin-bottom: 30px; }
+        .scene-bg img { width: 100%; height: 100%; object-fit: cover; }
+        .scene-text { font-size: 1.2rem; margin-bottom: 30px; line-height: 1.8; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .choices { display: flex; flex-direction: column; gap: 15px; }
+        .choice-btn { padding: 15px 20px; background: #fff; border: 2px solid #8b4513; border-radius: 8px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; text-align: left; font-family: "楷体"; }
+        .choice-btn:hover { background: #f5f0e6; transform: translateX(5px); }
+        /* 弹窗样式 */
+        .popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 100; display: none; max-width: 600px; width: 90%; }
+        .popup-title { font-size: 1.5rem; color: #8b2323; margin-bottom: 20px; text-align: center; }
+        .popup-content { font-size: 1.1rem; margin-bottom: 25px; }
+        .popup-btn { text-align: center; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99; display: none; }
+        /* 结局页面样式 */
+        .ending-page { display: none; padding: 50px 0; text-align: center; }
+        .ending-title { font-size: 2rem; color: #8b2323; margin-bottom: 30px; }
+        .ending-desc { font-size: 1.2rem; margin: 20px 0; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.8; }
+        .restart-btn { margin-top: 30px; }
+        /* 总结页面样式 */
+        .summary-page { display: none; padding: 30px 0; }
+        .summary-title { font-size: 2rem; color: #8b2323; margin-bottom: 30px; text-align: center; }
+        .summary-table { width: 100%; border-collapse: collapse; margin: 30px 0; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .summary-table th, .summary-table td { padding: 15px; text-align: center; border-bottom: 1px solid #eee; }
+        .summary-table th { background: #8b4513; color: #fff; font-size: 1.1rem; }
+        .summary-table td { font-size: 1rem; }
+        .summary-conclusion { font-size: 1.2rem; line-height: 1.8; background: #f5f0e6; padding: 20px; border-radius: 8px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 首页 -->
+        <div class="start-page" id="startPage">
+            <h1 class="title">探寻中国之路·一个青年革命者的思考</h1>
+            <p class="intro">19世纪末，神州陆沉，山河破碎。你，一位心怀家国的中国青年，将在乱世中探寻救国救民的道路。</p>
+            <p class="intro">不同的选择，将导向不同的结局。最终，你能否找到真正让民族独立、人民解放的光明之路？</p>
+            <input type="text" class="name-input" id="userName" placeholder="请输入你的名字" required>
+            <br>
+            <button class="btn" id="startBtn">踏上救国之路</button>
+        </div>
+
+        <!-- 场景页面 -->
+        <div class="scene-page" id="scenePage">
+            <div class="scene-bg" id="sceneBg">
+                <img src="a" alt="清末乱世场景">
+            </div>
+            <div class="scene-text" id="sceneText"></div>
+            <div class="choices" id="choices"></div>
+        </div>
+
+        <!-- 弹窗 -->
+        <div class="overlay" id="overlay"></div>
+        <div class="popup" id="popup">
+            <h3 class="popup-title" id="popupTitle"></h3>
+            <div class="popup-content" id="popupContent"></div>
+            <div class="popup-btn">
+                <button class="btn" id="popupBtn">继续前行</button>
+            </div>
+        </div>
+
+        <!-- 结局页面 -->
+        <div class="ending-page" id="endingPage">
+            <h2 class="ending-title" id="endingTitle"></h2>
+            <div class="scene-bg">
+                <img src="" alt="结局场景" id="endingImg">
+            </div>
+            <p class="ending-desc" id="endingDesc"></p>
+            <button class="btn restart-btn" id="restartBtn">重新探寻</button>
+            <button class="btn restart-btn" id="summaryBtn" style="margin-left: 20px;">查看历史总结</button>
+        </div>
+
+        <!-- 总结页面 -->
+        <div class="summary-page" id="summaryPage">
+            <h2 class="summary-title">四大救国路线结局对比</h2>
+            <table class="summary-table">
+                <tr>
+                    <<th>救国路线</</th>
+                    <<th>核心主张</</th>
+                    <<th>最终结局</</th>
+                    <<th>历史启示</</th>
+                </tr>
+                <tr>
+                    <td>封建地主阶级自强（洋务运动）</td>
+                    <td>中体西用，只学技术不学制度</td>
+                    <td>甲午战败，洋务梦碎，中国半殖民地化加深</td>
+                    <td>封建制度的腐朽是救国失败的根源，仅靠技术革新无法挽救中国</td>
+                </tr>
+                <tr>
+                    <td>资产阶级维新派（戊戌变法）</td>
+                    <td>君主立宪，依靠皇权进行温和改革</td>
+                    <td>百日维新失败，维新派被杀，改革成果付诸东流</td>
+                    <td>脱离人民群众、软弱的资产阶级无法对抗封建顽固势力</td>
+                </tr>
+                <tr>
+                    <td>资产阶级革命派（辛亥革命）</td>
+                    <td>民主共和，暴力推翻封建帝制</td>
+                    <td>推翻帝制但未彻底反帝反封建，中国陷入军阀混战</td>
+                    <td>资产阶级的妥协性导致革命不彻底，无法改变中国社会性质</td>
+                </tr>
+                <tr>
+                    <td>马克思主义道路（新民主主义革命）</td>
+                    <td>无产阶级领导，依靠工农群众，反帝反封建</td>
+                    <td>民族独立，人民解放，建立中华人民共和国</td>
+                    <td>马克思主义符合中国国情，人民群众是历史的创造者</td>
+                </tr>
+            </table>
+            <div class="summary-conclusion">
+                <strong>历史结论：</strong> 近代中国的救国探索证明，封建地主阶级、资产阶级都无法承担起反帝反封建的历史任务。马克思主义之所以成为历史与人民的选择，是因为它立足中国国情，指明了无产阶级领导、依靠工农群众的革命道路，最终实现了民族独立和人民解放，为中国的发展奠定了坚实基础。
+            </div>
+            <button class="btn restart-btn" id="finalRestartBtn" style="margin-top: 30px;">再次体验</button>
+        </div>
+    </div>
+
+    <script>
+        // 游戏数据
+        const gameData = {
+            userName: "",
+            currentScene: "start",
+            scenes: {
+                // 初始选择（四大路线）
+                init: {
+                    bg: "https://picsum.photos/id/1041/1200/400",
+                    text: "{name}，1895年，甲午战败的消息传来，举国震惊。你站在北平街头，看着洋人横行、百姓流离，心中燃起救国之火。身边的人们提出了不同的救国主张，你选择跟随哪一条道路？",
+                    choices: [
+                        {
+                            text: "洋务派：师夷长技以制夷，学习西方技术，创办实业、建立新军",
+                            nextScene: "yangwu_1",
+                            popup: {
+                                title: "选择洋务运动",
+                                content: "你相信“中学为体，西学为用”，认为只要掌握西方的先进技术，就能实现国家富强。你加入了洋务派创办的兵工厂，开始学习机械制造。"
+                            }
+                        },
+                        {
+                            text: "维新派：依靠光绪帝，实行君主立宪，进行温和的制度改革",
+                            nextScene: "weixin_1",
+                            popup: {
+                                title: "选择戊戌变法",
+                                content: "你认为封建帝制仍有挽救的可能，主张通过自上而下的改革实现宪政。你成为康有为、梁启超的追随者，积极上书光绪帝，推动变法。"
+                            }
+                        },
+                        {
+                            text: "资产阶级革命派：推翻满清帝制，建立民主共和国，用暴力革命救国",
+                            nextScene: "geming_1",
+                            popup: {
+                                title: "选择辛亥革命",
+                                content: "你认为封建帝制是中国落后的根源，只有彻底推翻满清统治，建立民主共和，才能救中国。你加入了孙中山领导的革命党，开始秘密筹备起义。"
+                            }
+                        },
+                        {
+                            text: "参加新民主主义革命：关注俄国十月革命，学习马克思主义，依靠工农群众",
+                            nextScene: "marx_1",
+                            popup: {
+                                title: "选择马克思主义",
+                                content: "你注意到俄国十月革命的胜利，认为无产阶级革命是救国的新希望。你开始阅读《共产党宣言》，深入工人和农民中，了解他们的苦难和诉求。"
+                            }
+                        }
+                    ]
+                },
+                // 洋务运动分支
+                yangwu_1: {
+                    bg: "https://picsum.photos/id/1059/1200/400",
+                    text: "你先后在江南制造总局和轮船招商局工作多年，却亲眼看到洋务运动的困境：工厂技术依赖洋人，资金被官员贪污，军队纪律涣散。有人提出“仅学技术不够，需改革制度”，你是否支持？",
+                    choices: [
+                        {
+                            text: "支持制度改革，向朝廷上书建议政治革新",
+                            nextScene: "yangwu_2",
+                            popup: {
+                                title: "主张制度革新",
+                                content: "你联合部分开明官员上书，请求废除科举、设立议院。但慈禧太后等顽固派认为你“动摇国本”，将你罢官流放，你的改革主张石沉大海。"
+                            }
+                        },
+                        {
+                            text: "坚持“中体西用”，专注改进技术，反对制度变革",
+                            nextScene: "yangwu_end",
+                            popup: {
+                                title: "坚守技术救国",
+                                content: "你埋头钻研技术，试图造出更先进的武器。但没有制度保障，工厂效率低下，甲午战争中，你参与制造的船舰不堪一击，洋务运动彻底失败。"
+                            }
+                        }
+                    ]
+                },
+                yangwu_2: {
+                    bg: "https://picsum.photos/id/1060/1200/400",
+                    text: "你被流放后，仍心系国家。1900年，八国联军侵华，北京沦陷。你在流放地得知消息，痛心疾首。此时有人劝你“放弃幻想，投靠列强”，你如何选择？",
+                    choices: [
+                        {
+                            text: "宁死不屈，坚守民族气节，继续呼吁救国",
+                            nextScene: "yangwu_end",
+                            popup: {
+                                title: "坚守气节",
+                                content: "你在流放地写下大量文章，呼吁国人觉醒，但在封建势力和列强的双重压迫下，你的声音微弱无力。最终，你在忧愤中病逝，洋务运动的尝试以失败告终。"
+                            }
+                        },
+                        {
+                            text: "无奈投靠列强，试图借助外力实现改革",
+                            nextScene: "yangwu_end2",
+                            popup: {
+                                title: "投靠列强",
+                                content: "你成为列强在华代理人，试图借助列强的力量推动改革。但列强只想瓜分中国，根本不会帮助中国独立富强。你最终成为民族罪人，被国人唾弃。"
+                            }
+                        }
+                    ]
+                },
+                // 维新变法分支
+                weixin_1: {
+                    bg: "https://picsum.photos/id/1061/1200/400",
+                    text: "1898年，光绪帝颁布“明定国是诏”，戊戌变法开始。你被任命为变法官员，负责推行教育改革。但慈禧太后为首的顽固派极力阻挠，有人建议你“联合民间力量对抗顽固派”，你是否同意？",
+                    choices: [
+                        {
+                            text: "同意，发动学生和市民请愿，支持变法",
+                            nextScene: "weixin_2",
+                            popup: {
+                                title: "联合民众",
+                                content: "你组织京师大学堂的学生和市民上街请愿，呼吁支持变法。但顽固派污蔑你“煽动民众，图谋不轨”，慈禧太后下令搜捕维新派，你被迫逃亡。"
+                            }
+                        },
+                        {
+                            text: "反对，相信光绪帝能说服顽固派，坚持温和改革",
+                            nextScene: "weixin_end",
+                            popup: {
+                                title: "依赖皇权",
+                                content: "你坚信光绪帝的权威，拒绝联合民众。但光绪帝缺乏实权，顽固派发动戊戌政变，囚禁光绪帝，捕杀维新派。你被逮捕入狱，最终被斩首，百日维新彻底失败。"
+                            }
+                        }
+                    ]
+                },
+                weixin_2: {
+                    bg: "https://picsum.photos/id/1062/1200/400",
+                    text: "你逃亡日本后，仍坚持维新主张。但你发现，没有民众的支持，仅凭少数开明官员和皇帝，根本无法对抗顽固势力。有人劝你“放弃君主立宪，加入革命党”，你如何选择？",
+                    choices: [
+                        {
+                            text: "坚持维新，等待时机回国继续推动君主立宪",
+                            nextScene: "weixin_end",
+                            popup: {
+                                title: "坚守维新",
+                                content: "你在日本等待多年，始终没有合适的时机。1912年，辛亥革命爆发，清朝灭亡，君主立宪成为泡影。你一生的理想未能实现，最终在海外郁郁而终。"
+                            }
+                        },
+                        {
+                            text: "转变思想，加入革命党，支持民主共和",
+                            nextScene: "geming_1",
+                            popup: {
+                                title: "转向革命",
+                                content: "你认识到维新道路的行不通，决定加入革命党。你利用自己在海外的影响力，为革命党筹集资金、宣传主张，成为革命阵营的重要一员。"
+                            }
+                        }
+                    ]
+                },
+                // 辛亥革命分支
+                geming_1: {
+                    bg: "https://picsum.photos/id/1063/1200/400",
+                    text: "1911年，武昌起义爆发，你跟随革命党人攻占南京。革命形势大好，但清廷任命袁世凯为内阁总理大臣，率军镇压革命。有人提出“联合袁世凯，逼迫清帝退位”，你是否同意？",
+                    choices: [
+                        {
+                            text: "同意，暂时妥协，先实现推翻帝制的目标",
+                            nextScene: "geming_2",
+                            popup: {
+                                title: "妥协袁世凯",
+                                content: "你认为推翻帝制是首要目标，同意与袁世凯谈判。袁世凯逼迫清帝退位，中华民国成立，袁世凯当选临时大总统。但你没想到，这为后来的军阀混战埋下了隐患。"
+                            }
+                        },
+                        {
+                            text: "反对，彻底消灭袁世凯势力，防止其篡夺革命果实",
+                            nextScene: "geming_end",
+                            popup: {
+                                title: "坚决革命",
+                                content: "你反对妥协，主张继续北伐，消灭袁世凯势力。但革命党内部意见不一，兵力不足，最终被袁世凯击败。你在战斗中牺牲，革命暂时受挫。"
+                            }
+                        }
+                    ]
+                },
+                geming_2: {
+                    bg: "https://picsum.photos/id/1064/1200/400",
+                    text: "袁世凯上台后，逐渐暴露独裁野心，解散国会、废除《临时约法》，甚至复辟帝制。你意识到妥协的危害，有人建议你“深入农村，发动农民群众，重建革命力量”，你如何选择？",
+                    choices: [
+                        {
+                            text: "同意，扎根农村，依靠农民开展革命",
+                            nextScene: "marx_1",
+                            popup: {
+                                title: "转向工农",
+                                content: "你深入农村，看到农民的苦难和革命潜力。你开始学习马克思主义，认识到只有依靠工农群众，才能实现彻底的革命。你成为连接革命党与工农群众的桥梁。"
+                            }
+                        },
+                        {
+                            text: "反对，坚持依靠城市资产阶级，发动二次革命",
+                            nextScene: "geming_end",
+                            popup: {
+                                title: "二次革命",
+                                content: "你联合部分革命党人发动二次革命，讨伐袁世凯。但资产阶级革命党力量分散，缺乏群众支持，最终被袁世凯镇压。你被迫再次逃亡，辛亥革命的成果彻底丧失。"
+                            }
+                        }
+                    ]
+                },
+                // 马克思主义分支
+                marx_1: {
+                    bg: "https://picsum.photos/id/1065/1200/400",
+                    text: "你深入工人和农民中，了解到他们的苦难。1921年，中国共产党成立，你加入了党组织。在讨论革命道路时，出现分歧：“效仿俄国，发动城市暴动”还是“立足农村，建立革命根据地”？",
+                    choices: [
+                        {
+                            text: "支持城市暴动，快速夺取全国政权",
+                            nextScene: "marx_2",
+                            popup: {
+                                title: "城市暴动路线",
+                                content: "你跟随部分领导人，发动城市工人暴动。但当时中国城市反动势力强大，工人阶级力量薄弱，暴动相继失败，革命遭受重大损失。你意识到，城市路线不符合中国国情。"
+                            }
+                        },
+                        {
+                            text: "支持农村包围城市，建立农村革命根据地",
+                            nextScene: "marx_end",
+                            popup: {
+                                title: "农村包围城市",
+                                content: "你支持“农村包围城市”的道路，跟随毛泽东等领导人前往井冈山，建立革命根据地。你发动农民打土豪、分田地，得到广大农民的支持，革命力量不断壮大。"
+                            }
+                        }
+                    ]
+                },
+                marx_2: {
+                    bg: "https://picsum.photos/id/1066/1200/400",
+                    text: "城市暴动失败后，你总结经验教训，认识到中国是农业大国，农民是革命的主力军。你向党组织建议“转向农村，依靠农民重建革命根据地”，党组织采纳了你的建议。你跟随部队前往井冈山，开始了新的革命征程。",
+                    choices: [
+                        {
+                            text: "扎根井冈山，发动农民群众，壮大革命力量",
+                            nextScene: "marx_end",
+                            popup: {
+                                title: "扎根农村",
+                                content: "你在井冈山发动农民打土豪、分田地，建立苏维埃政权。农民积极参军参战，革命根据地不断扩大。你深刻体会到，人民群众是革命胜利的根本保障。"
+                            }
+                        }
+                    ]
+                },
+                // 结局场景
+                yangwu_end: {
+                    type: "ending",
+                    title: "洋务梦碎·山河依旧",
+                    img: "https://picsum.photos/id/1067/1200/400",
+                    desc: "{name}，你终其一生坚守技术救国的理想，但在封建制度的枷锁下，洋务运动如同无源之水、无本之木。甲午战争的炮火摧毁了你的工厂，也击碎了你的救国梦。最终，你看着列强瓜分中国，百姓流离失所，在忧愤中病逝。历史证明，仅靠技术革新，不改变腐朽的封建制度，无法挽救中国。"
+                },
+                yangwu_end2: {
+                    type: "ending",
+                    title: "投靠列强·民族罪人",
+                    img: "https://picsum.photos/id/1068/1200/400",
+                    desc: "{name}，你为了实现改革理想，选择投靠列强。但列强只想利用你瓜分中国利益，根本不会帮助中国独立富强。你成为列强在华的代理人，帮助列强掠夺资源、镇压同胞，最终被国人唾弃为“汉奸”。你在孤独和骂名中死去，成为历史的耻辱。"
+                },
+                weixin_end: {
+                    type: "ending",
+                    title: "维新悲歌·理想难圆",
+                    img: "https://picsum.photos/id/1069/1200/400",
+                    desc: "{name}，你坚守君主立宪的理想，试图通过温和改革挽救中国。但在封建顽固势力的残酷镇压下，戊戌变法如同昙花一现。你要么被斩首示众，要么在海外郁郁而终。历史证明，脱离人民群众、软弱的资产阶级维新派，无法对抗强大的封建顽固势力，维新道路在中国行不通。"
+                },
+                geming_end: {
+                    type: "ending",
+                    title: "革命未竟·军阀混战",
+                    img: "https://picsum.photos/id/1070/1200/400",
+                    desc: "{name}，你为了民主共和的理想，献出了自己的生命或被迫流亡。辛亥革命虽然推翻了封建帝制，但由于资产阶级的妥协性和软弱性，革命果实被袁世凯篡夺。此后，中国陷入军阀混战的局面，百姓生活更加困苦。历史证明，资产阶级革命派无法彻底反帝反封建，无法改变中国半殖民地半封建的社会性质。"
+                },
+                marx_end: {
+                    type: "ending",
+                    title: "民族独立·人民解放",
+                    img: "https://picsum.photos/id/1071/1200/400",
+                    desc: "{name}，你跟随中国共产党，走上了马克思主义指引的革命道路。你扎根农村，依靠工农群众，经历了土地革命、抗日战争、解放战争的艰苦斗争。最终，在1949年10月1日，你站在天安门广场，见证了中华人民共和国的成立。毛主席庄严宣布：“中华人民共和国中央人民政府今天成立了！” 民族独立、人民解放的目标终于实现，你已不再是青年，却用半生的努力让救亡图存的理想成为现实。历史证明，马克思主义是科学的理论，人民群众是历史的创造者，社会主义没有辜负中国，只有马克思主义才能救中国！"
+                }
+            }
+        };
+
+        // DOM元素
+        const startPage = document.getElementById("startPage");
+        const scenePage = document.getElementById("scenePage");
+        const popup = document.getElementById("popup");
+        const overlay = document.getElementById("overlay");
+        const endingPage = document.getElementById("endingPage");
+        const summaryPage = document.getElementById("summaryPage");
+
+        const userNameInput = document.getElementById("userName");
+        const startBtn = document.getElementById("startBtn");
+        const sceneBg = document.getElementById("sceneBg").querySelector("img");
+        const sceneText = document.getElementById("sceneText");
+        const choices = document.getElementById("choices");
+        const popupTitle = document.getElementById("popupTitle");
+        const popupContent = document.getElementById("popupContent");
+        const popupBtn = document.getElementById("popupBtn");
+        const endingTitle = document.getElementById("endingTitle");
+        const endingImg = document.getElementById("endingImg");
+        const endingDesc = document.getElementById("endingDesc");
+        const restartBtn = document.getElementById("restartBtn");
+        const summaryBtn = document.getElementById("summaryBtn");
+        const finalRestartBtn = document.getElementById("finalRestartBtn");
+
+        // 初始化游戏
+        startBtn.addEventListener("click", () => {
+            const name = userNameInput.value.trim() || "无名青年";
+            gameData.userName = name;
+            gameData.currentScene = "init";
+            showScene("init");
+            startPage.style.display = "none";
+            scenePage.style.display = "block";
+        });
+
+        // 显示场景
+        function showScene(sceneKey) {
+            const scene = gameData.scenes[sceneKey];
+            if (!scene) return;
+
+            // 替换姓名占位符
+            const text = scene.text.replace("{name}", gameData.userName);
+
+            // 设置场景背景和文本
+            sceneBg.src = scene.bg;
+            sceneText.textContent = text;
+
+            // 生成选择按钮
+            choices.innerHTML = "";
+            scene.choices.forEach((choice, index) => {
+                const btn = document.createElement("button");
+                btn.className = "choice-btn";
+                btn.textContent = choice.text;
+                btn.addEventListener("click", () => {
+                    // 显示弹窗
+                    popupTitle.textContent = choice.popup.title;
+                    popupContent.textContent = choice.popup.content;
+                    overlay.style.display = "block";
+                    popup.style.display = "block";
+
+                    // 弹窗按钮事件
+                    popupBtn.onclick = () => {
+                        overlay.style.display = "none";
+                        popup.style.display = "none";
+
+                        // 进入下一场景
+                        const nextScene = choice.nextScene;
+                        gameData.currentScene = nextScene;
+
+                        // 检查是否为结局场景
+                        if (gameData.scenes[nextScene].type === "ending") {
+                            showEnding(nextScene);
+                        } else {
+                            showScene(nextScene);
+                        }
+                    };
+                });
+                choices.appendChild(btn);
+            });
+        }
+
+        // 显示结局
+        function showEnding(endingKey) {
+            const ending = gameData.scenes[endingKey];
+            endingTitle.textContent = ending.title;
+            endingImg.src = ending.img;
+            endingDesc.textContent = ending.desc.replace("{name}", gameData.userName);
+            scenePage.style.display = "none";
+            endingPage.style.display = "block";
+        }
+
+        // 重新开始
+        restartBtn.addEventListener("click", resetGame);
+        finalRestartBtn.addEventListener("click", resetGame);
+
+        function resetGame() {
+            gameData.currentScene = "start";
+            userNameInput.value = "";
+            startPage.style.display = "block";
+            scenePage.style.display = "none";
+            endingPage.style.display = "none";
+            summaryPage.style.display = "none";
+        }
+
+        // 查看总结
+        summaryBtn.addEventListener("click", () => {
+            endingPage.style.display = "none";
+            summaryPage.style.display = "block";
+        });
+    </script>
+</body>
+</html>
