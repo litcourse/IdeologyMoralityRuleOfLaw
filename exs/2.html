@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史的选择：寻找中国之路</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+        }
+         
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+         
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            min-height: 600px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+         
+        .scene {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+         
+        .active {
+            display: flex;
+        }
+         
+        .scene-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #b21f1f;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+         
+        .scene-subtitle {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1a2a6c;
+            font-size: 16px;
+            font-style: italic;
+        }
+         
+        .scene-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+        }
+         
+        .scene-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            max-width: 800px;
+        }
+         
+        .choices {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 700px;
+        }
+         
+        .choice-btn {
+            padding: 15px 20px;
+            background: linear-gradient(to right, #1a2a6c, #2c3e50);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+         
+        .choice-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+         
+        .choice-btn:active {
+            transform: translateY(1px);
+        }
+         
+        .station-scene {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23333"/><path d="M10,50 L90,50 M50,10 L50,90" stroke="%23ddd" stroke-width="2"/></svg>');
+            background-size: cover;
+            color: white;
+        }
+         
+        .train-options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 20px;
+            gap: 15px;
+        }
+         
+        @media (min-width: 768px) {
+            .train-options {
+                flex-direction: row;
+                justify-content: space-around;
+            }
+        }
+         
+        .train-option {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #fdbb2d;
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            max-width: 200px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+         
+        .train-option:hover {
+            transform: scale(1.05);
+            background: rgba(253, 187, 45, 0.2);
+        }
+         
+        .train-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fdbb2d;
+            margin-bottom: 10px;
+        }
+         
+        .train-name {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+         
+        .train-flag {
+            height: 40px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+         
+        .result-scene {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23222"/><circle cx="50" cy="50" r="40" fill="none" stroke="%23555" stroke-width="2"/></svg>');
+            background-size: cover;
+            color: white;
+        }
+         
+        .result-content {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+         
+        .result-title {
+            color: #fdbb2d;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+         
+        .result-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+         
+        .map-scene {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a2a6c"/><path d="M10,10 L90,10 L80,90 L20,90 Z" fill="none" stroke="%23b21f1f" stroke-width="2"/></svg>');
+            background-size: cover;
+            color: white;
+        }
+         
+        .revolution-map {
+            width: 100%;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+         
+        .map-location {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #b21f1f;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #fdbb2d;
+            font-size: 14px;
+        }
+         
+        .map-location:hover {
+            transform: scale(1.2);
+            background: #fdbb2d;
+            color: #1a2a6c;
+        }
+         
+        .map-location.active {
+            background: #fdbb2d;
+            box-shadow: 0 0 10px #fdbb2d;
+            color: #1a2a6c;
+        }
+         
+        .location-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 14px;
+        }
+         
+        .certificate-scene {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            color: #333;
+        }
+         
+        .certificate {
+            background: white;
+            padding: 30px;
+            border: 10px double #b21f1f;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin: 20px 0;
+            max-width: 600px;
+        }
+         
+        .certificate h2 {
+            color: #b21f1f;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+         
+        .certificate p {
+            margin: 10px 0;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+         
+        .student-name {
+            font-weight: bold;
+            color: #1a2a6c;
+            font-size: 22px;
+            text-decoration: underline;
+        }
+         
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+            width: 100%;
+            max-width: 700px;
+        }
+         
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+         
+        .history-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #b21f1f;
+            color: #333;
+            max-width: 700px;
+        }
+         
+        .history-card h3 {
+            color: #1a2a6c;
+            margin-bottom: 8px;
+        }
+         
+        .btn-next {
+            display: block;
+            margin: 20px auto 0;
+            padding: 12px 30px;
+            background: linear-gradient(to right, #b21f1f, #fdbb2d);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+        }
+         
+        .btn-next:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+         
+        .character {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 500px;
+        }
+         
+        .character-info h3 {
+            color: #fdbb2d;
+            margin-bottom: 5px;
+        }
+         
+        .quote {
+            font-style: italic;
+            color: #fdbb2d;
+            margin: 15px 0;
+            font-size: 18px;
+            text-align: center;
+            max-width: 600px;
+        }
+         
+        .shoes-evolution {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin: 20px 0;
+            gap: 20px;
+        }
+         
+        @media (min-width: 768px) {
+            .shoes-evolution {
+                flex-direction: row;
+                justify-content: space-around;
+            }
+        }
+         
+        .shoe-item {
+            text-align: center;
+            width: 100%;
+            max-width: 200px;
+        }
+         
+        .shoe-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+         
+        .shoe-label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+         
+        .reflection-input {
+            width: 100%;
+            max-width: 500px;
+            height: 100px;
+            padding: 10px;
+            border: 2px solid #1a2a6c;
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 15px 0;
+            resize: none;
+        }
+         
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+         
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            color: #333;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+         
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #b21f1f;
+        }
+         
+        .modal-title {
+            color: #1a2a6c;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+         
+        .modal-text {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+         
+        .modal-image {
+            width: 100%;
+            height: 150px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            color: #666;
+            background-size: cover;
+            background-position: center;
+        }
+         
+        .highlight {
+            color: #b21f1f;
+            font-weight: bold;
+        }
+         
+        .name-input-container {
+            margin: 20px 0;
+            width: 100%;
+            max-width: 400px;
+        }
+         
+        .name-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #1a2a6c;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+         
+        .name-input-label {
+            font-size: 18px;
+            color: #1a2a6c;
+            font-weight: bold;
+        }
+         
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .game-container {
+                height: auto;
+                min-height: 100vh;
+            }
+             
+            .scene {
+                padding: 15px;
+            }
+             
+            .scene-title {
+                font-size: 22px;
+            }
+             
+            .scene-text {
+                font-size: 16px;
+            }
+             
+            .choice-btn {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+             
+            .train-option {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+             
+            .map-location {
+                width: 40px;
+                height: 40px;
+                font-size: 12px;
+            }
+             
+            .location-label {
+                font-size: 12px;
+            }
+             
+            .certificate {
+                padding: 20px;
+            }
+             
+            .certificate h2 {
+                font-size: 24px;
+            }
+             
+            .certificate p {
+                font-size: 16px;
+            }
+             
+            .modal-content {
+                padding: 20px;
+            }
+             
+            .modal-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- 场景1：角色代入 -->
+        <div class="scene active" id="scene1">
+            <h1 class="scene-title">历史的选择：寻找中国之路</h1>
+            <div class="scene-content">
+                <p class="scene-text">1921年，中国正处于内忧外患之中。列强侵略，军阀混战，人民生活在水深火热之中。</p>
+                <p class="scene-text">你是一名怀揣救国理想的热血青年，面对国家的危难，你将如何选择前进的道路？</p>
+                 
+                <div class="character">
+                    <div class="character-info">
+                        <h3>你的角色：爱国青年</h3>
+                        <p>你来自一个普通家庭，目睹了国家的苦难，决心寻找救国之路。</p>
+                    </div>
+                </div>
+                 
+                <div class="name-input-container">
+                    <div class="name-input-label">请输入你的姓名：</div>
+                    <input type="text" class="name-input" id="student-name-input" placeholder="请输入你的姓名">
+                </div>
+                 
+                <div class="quote">"天下兴亡，匹夫有责"</div>
+                 
+                <div class="progress-bar">
+                    <div class="progress" style="width: 10%"></div>
+                </div>
+                 
+                <button class="btn-next" onclick="startGame()">开始探索救国之路</button>
+            </div>
+        </div>
+         
+        <!-- 场景2：1921车站 -->
+        <div class="scene station-scene" id="scene2">
+            <h2 class="scene-title">启程·1921车站</h2>
+            <p class="scene-subtitle">你来到了一个象征历史抉择的火车站，面前有四列火车，分别代表不同的救国道路</p>
+             
+            <div class="scene-content">
+                <p class="scene-text">汽笛长鸣，四列火车整装待发。每一列都代表着一条可能的救国道路，你将登上哪一列？</p>
+                 
+                <div class="train-options">
+                    <div class="train-option" onclick="selectTrain(1)">
+                        <div class="train-number">1号</div>
+                        <div class="train-flag">🏯</div>
+                        <div class="train-name">封建王朝号</div>
+                        <div>延续封建帝制</div>
+                    </div>
+                     
+                    <div class="train-option" onclick="selectTrain(2)">
+                        <div class="train-number">2号</div>
+                        <div class="train-flag">👑</div>
+                        <div class="train-name">君主立宪号</div>
+                        <div>建立君主立宪制</div>
+                    </div>
+                     
+                    <div class="train-option" onclick="selectTrain(3)">
+                        <div class="train-number">3号</div>
+                        <div class="train-flag">🗳️</div>
+                        <div class="train-name">民主共和号</div>
+                        <div>建立西式民主共和国</div>
+                    </div>
+                     
+                    <div class="train-option" onclick="selectTrain(4)">
+                        <div class="train-number">4号</div>
+                        <div class="train-flag">🔍</div>
+                        <div class="train-name">未知探索号</div>
+                        <div>探索全新道路</div>
+                    </div>
+                </div>
+                 
+                <div class="progress-bar">
+                    <div class="progress" style="width: 30%"></div>
+                </div>
+            </div>
+        </div>
+         
+        <!-- 场景3：道路的尽头/希望的道路 -->
+        <div class="scene result-scene" id="scene3">
+            <h2 class="scene-title" id="result-title">道路的尽头</h2>
+             
+            <div class="scene-content">
+                <div id="train-result">
+                    <!-- 动态内容将由JavaScript填充 -->
+                </div>
+                 
+                <div class="progress-bar">
+                    <div class="progress" style="width: 50%"></div>
+                </div>
+                 
+                <button class="btn-next" onclick="nextScene(2)">重新选择道路</button>
+            </div>
+        </div>
+         
+        <!-- 场景4：星火燎原 -->
+        <div class="scene map-scene" id="scene4">
+            <h2 class="scene-title">星火燎原</h2>
+            <p class="scene-subtitle">十月革命一声炮响，给中国送来了马克思列宁主义</p>
+             
+            <div class="scene-content">
+                <p class="scene-text">你接触到了新的思想，看到了新的希望。现在，你需要帮助革命力量选择正确的发展路线：</p>
+                 
+                <div class="revolution-map">
+                    <div class="map-location" style="top: 20%; left: 65%;" onclick="showLocationModal('shanghai')">
+                        上海
+                        <div class="location-label">中共一大</div>
+                    </div>
+                    <div class="map-location" style="top: 45%; left: 55%;" onclick="showLocationModal('nanchang')">
+                        南昌
+                        <div class="location-label">南昌起义</div>
+                    </div>
+                    <div class="map-location" style="top: 55%; left: 45%;" onclick="showLocationModal('jinggangshan')">
+                        井冈山
+                        <div class="location-label">革命根据地</div>
+                    </div>
+                    <div class="map-location" style="top: 35%; left: 30%;" onclick="showLocationModal('yanan')">
+                        延安
+                        <div class="location-label">革命圣地</div>
+                    </div>
+                </div>
+                 
+                <div class="choices">
+                    <button class="choice-btn" onclick="selectRevolutionChoice(1)">A. 攻打大城市（速战速决）</button>
+                    <button class="choice-btn" onclick="selectRevolutionChoice(2)">B. 农村包围城市（建立革命根据地）</button>
+                    <button class="choice-btn" onclick="selectRevolutionChoice(3)">C. 依赖外国援助（争取外部支持）</button>
+                </div>
+                 
+                <div class="history-card">
+                    <h3>历史卡片：李大钊语录</h3>
+                    <p>"试看将来的环球，必是赤旗的世界！"</p>
+                </div>
+                 
+                <div class="progress-bar">
+                    <div class="progress" style="width: 70%"></div>
+                </div>
+            </div>
+        </div>
+         
+        <!-- 场景5：革命道路结果 -->
+        <div class="scene result-scene" id="scene5">
+            <h2 class="scene-title" id="revolution-result-title">正确的道路</h2>
+             
+            <div class="scene-content">
+                <div id="revolution-result">
+                    <!-- 动态内容将由JavaScript填充 -->
+                </div>
+                 
+                <div class="history-card">
+                    <h3>历史卡片：井冈山道路</h3>
+                    <p>毛泽东同志创造性地提出了"农村包围城市，武装夺取政权"的革命道路，为中国革命指明了方向。</p>
+                </div>
+                 
+                <div class="progress-bar">
+                    <div class="progress" style="width: 90%"></div>
+                </div>
+                 
+                <button class="btn-next" onclick="nextScene(6)">总结感悟</button>
+            </div>
+        </div>
+         
+        <!-- 场景6：合脚的鞋子 -->
+        <div class="scene certificate-scene" id="scene6">
+            <h2 class="scene-title">合脚的鞋子</h2>
+             
+            <div class="scene-content">
+                <p class="scene-text">从井冈山的草鞋，到长征的布鞋，再到新时代的运动鞋...</p>
+                <p class="scene-text">我们终于找到了最适合中国道路的鞋子！</p>
+                 
+                <div class="shoes-evolution">
+                    <div class="shoe-item">
+                        <div class="shoe-icon">👞</div>
+                        <div class="shoe-label">封建帝制</div>
+                        <div>束缚双脚</div>
+                    </div>
+                    <div class="shoe-item">
+                        <div class="shoe-icon">👟</div>
+                        <div class="shoe-label">西方模式</div>
+                        <div>不合脚型</div>
+                    </div>
+                    <div class="shoe-item">
+                        <div class="shoe-icon">🏃</div>
+                        <div class="shoe-label">中国特色社会主义</div>
+                        <div>最适合中国</div>
+                    </div>
+                </div>
+                 
+                <p class="scene-text">请分享你的感悟：</p>
+                <textarea class="reflection-input" id="reflection-input" placeholder="在此输入你的感悟..."></textarea>
+                 
+                <div class="certificate">
+                    <h2>历史探索证书</h2>
+                    <p>授予：<span class="student-name" id="student-name">探索者</span></p>
+                    <p>在《历史的选择》互动体验中</p>
+                    <p>你历经探索，最终明白了：</p>
+                    <p><strong>中国特色社会主义是历史和人民的选择</strong></p>
+                    <p>这条道路不是天上掉下来的，</p>
+                    <p>是党和人民历尽千辛万苦、付出巨大代价取得的根本成就。</p>
+                    <br>
+                    <p>—— 思政课堂 · 历史的选择 ——</p>
+                </div>
+                 
+                <div class="progress-bar">
+                    <div class="progress" style="width: 100%"></div>
+                </div>
+                 
+                <button class="btn-next" onclick="restartGame()">重新开始</button>
+            </div>
+        </div>
+    </div>
+     
+    <!-- 地点介绍模态框 -->
+    <div class="modal" id="location-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">×</span>
+            <h2 class="modal-title" id="modal-title">地点名称</h2>
+            <div class="modal-image" id="modal-image"></div>
+            <p class="modal-text" id="modal-text">地点介绍内容...</p>
+            <p class="modal-text" id="modal-significance"><span class="highlight">历史意义：</span></p>
+        </div>
+    </div>
+ 
+    <script>
+        let currentScene = 1;
+        let userChoices = [];
+         
+        function startGame() {
+            const nameInput = document.getElementById('student-name-input');
+            const studentName = nameInput.value.trim();
+             
+            if (studentName === '') {
+                alert('请输入你的姓名！');
+                return;
+            }
+             
+            // 保存姓名到证书
+            document.getElementById('student-name').textContent = studentName;
+             
+            nextScene(2);
+        }
+         
+        function nextScene(sceneNumber) {
+            document.getElementById('scene' + currentScene).classList.remove('active');
+            document.getElementById('scene' + sceneNumber).classList.add('active');
+            currentScene = sceneNumber;
+        }
+         
+        function selectTrain(trainNumber) {
+            userChoices.push({type: 'train', value: trainNumber});
+            let resultHtml = '';
+            let resultTitle = '道路的尽头';
+             
+            switch(trainNumber) {
+                case 1:
+                    resultHtml = `
+                        <div class="result-content">
+                            <h3 class="result-title">封建王朝号</h3>
+                            <p class="result-text">你选择了延续封建帝制的道路。然而，紫禁城的大门紧闭，传来太监的声音："祖宗之法不可变！"</p>
+                            <p class="result-text"><strong>结局：</strong>你被挡在门外...封建主义之路已到尽头，无法适应现代世界的挑战。</p>
+                        </div>
+                    `;
+                    break;
+                case 2:
+                    resultHtml = `
+                        <div class="result-content">
+                            <h3 class="result-title">君主立宪号</h3>
+                            <p class="result-text">你选择了君主立宪制的道路。然而，袁世凯的称帝闹剧和各地护国军起义表明这条路行不通。</p>
+                            <p class="result-text"><strong>结局：</strong>君主立宪成了复辟帝制的遮羞布，无法解决中国的根本问题。</p>
+                        </div>
+                    `;
+                    break;
+                case 3:
+                    resultHtml = `
+                        <div class="result-content">
+                            <h3 class="result-title">民主共和号</h3>
+                            <p class="result-text">你选择了建立西式民主共和国的道路。然而，军阀混战和列强瓜分的现实让你感到绝望。</p>
+                            <p class="result-text"><strong>结局：</strong>民主共和沦为军阀割据的空壳，无法实现真正的民族独立和人民解放。</p>
+                        </div>
+                    `;
+                    break;
+                case 4:
+                    resultHtml = `
+                        <div class="result-content">
+                            <h3 class="result-title">未知探索号</h3>
+                            <p class="result-text">你选择了探索未知的道路。在黑暗中，你看到一束微光——马克思的著作。</p>
+                            <p class="result-text"><strong>进展：</strong>你接触到了新的思想，十月革命的成功给了你启示，社会主义道路或许是中国的新希望。</p>
+                            <div style="margin-top: 20px;">
+                                <button class="btn-next" onclick="nextScene(4)">继续探索革命道路</button>
+                            </div>
+                        </div>
+                    `;
+                    resultTitle = '希望的道路';
+                    break;
+            }
+             
+            document.getElementById('train-result').innerHTML = resultHtml;
+            document.getElementById('result-title').textContent = resultTitle;
+            nextScene(3);
+        }
+         
+        function showLocationModal(location) {
+            const modal = document.getElementById('location-modal');
+            const title = document.getElementById('modal-title');
+            const image = document.getElementById('modal-image');
+            const text = document.getElementById('modal-text');
+            const significance = document.getElementById('modal-significance');
+             
+            switch(location) {
+                case 'shanghai':
+                    title.textContent = '上海 · 中共一大会址';
+                    image.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://images.unsplash.com/photo-1593081891731-f4d1c324225b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80)';
+                    image.innerHTML = '<div style="background: rgba(0,0,0,0.5); color: white; padding: 10px; border-radius: 5px;">中共一大会址纪念馆</div>';
+                    text.textContent = '1921年7月，中国共产党第一次全国代表大会在上海法租界望志路106号（今兴业路76号）召开。会议进行到中途，因遭到法租界巡捕的搜查，最后一天转移到浙江嘉兴南湖的一艘游船上继续举行。';
+                    significance.innerHTML = '<span class="highlight">历史意义：</span>中共一大的召开标志着中国共产党的正式成立，这是中国历史上开天辟地的大事变。自从有了中国共产党，中国革命的面貌就焕然一新了。';
+                    break;
+                case 'nanchang':
+                    title.textContent = '南昌 · 南昌起义';
+                    image.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://images.unsplash.com/photo-1551641506-ee5bf4cb45f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80)';
+                    image.innerHTML = '<div style="background: rgba(0,0,0,0.5); color: white; padding: 10px; border-radius: 5px;">南昌八一起义纪念馆</div>';
+                    text.textContent = '1927年8月1日，中国共产党领导部分国民革命军在江西省南昌市举行的武装起义。起义由周恩来、贺龙、叶挺、朱德、刘伯承等领导，是中国共产党直接领导的带有全局意义的一次武装暴动。';
+                    significance.innerHTML = '<span class="highlight">历史意义：</span>南昌起义打响了武装反抗国民党反动派的第一枪，标志着中国共产党独立创建革命军队和领导革命战争的开始。8月1日因此成为中国人民解放军的建军节。';
+                    break;
+                case 'jinggangshan':
+                    title.textContent = '井冈山 · 革命根据地';
+                    image.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://images.unsplash.com/photo-1601132359864-bcb52b326859?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80)';
+                    image.innerHTML = '<div style="background: rgba(0,0,0,0.5); color: white; padding: 10px; border-radius: 5px;">井冈山革命博物馆</div>';
+                    text.textContent = '1927年10月，毛泽东率领湘赣边界秋收起义的工农革命军到达井冈山地区，开创了中国共产党领导下的第一个农村革命根据地。井冈山革命根据地的建立，点燃了"工农武装割据"的星星之火。';
+                    significance.innerHTML = '<span class="highlight">历史意义：</span>井冈山革命根据地是中国革命的摇篮，开辟了"农村包围城市，武装夺取政权"的革命道路，为中国革命指明了正确方向。';
+                    break;
+                case 'yanan':
+                    title.textContent = '延安 · 革命圣地';
+                    image.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://images.unsplash.com/photo-1587332278432-183b6d3e1d3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80)';
+                    image.innerHTML = '<div style="background: rgba(0,0,0,0.5); color: white; padding: 10px; border-radius: 5px;">延安革命纪念馆</div>';
+                    text.textContent = '1935年10月，中共中央和中央红军经过长征到达陕北。1937年1月，中共中央进驻延安。从此，延安成为中国人民抗日战争和解放战争的指挥中心和战略总后方。';
+                    significance.innerHTML = '<span class="highlight">历史意义：</span>延安时期是中国共产党发展壮大的关键时期，形成了伟大的延安精神。在这里，毛泽东思想得到系统总结和多方面展开而达到成熟。';
+                    break;
+            }
+             
+            modal.style.display = 'flex';
+        }
+         
+        function closeModal() {
+            document.getElementById('location-modal').style.display = 'none';
+        }
+         
+        function selectRevolutionChoice(choice) {
+            userChoices.push({type: 'revolution', value: choice});
+            let resultHtml = '';
+            let resultTitle = '正确的道路';
+             
+            switch(choice) {
+                case 1:
+                    resultHtml = `
+                        <div class="result-content">
+                            <h3 class="result-title">攻打大城市</h3>
+                            <p class="result-text">你选择了攻打大城市的路线。然而，革命力量薄弱，缺乏群众基础，起义最终失败。</p>
+                            <p class="result-text"><strong>教训：</strong>脱离实际、急于求成的路线不符合中国革命的实际。</p>
+                            <div style="margin-top: 20px;">
+                                <button class="btn-next" onclick="nextScene(4)">重新选择革命道路</button>
+                            </div>
+                        </div>
+                    `;
+                    resultTitle = '错误的道路';
+                    break;
+                case 2:
+                    resultHtml = `
+                        <div class="result-content">
+                            <h3 class="result-title">农村包围城市</h3>
+                            <p class="result-text">你选择了农村包围城市的路线。革命力量在广大农村建立根据地，发动农民群众，革命力量不断壮大。</p>
+                            <p class="result-text"><strong>成就：</strong>井冈山革命根据地成功建立，星星之火开始燎原！</p>
+                        </div>
+                    `;
+                    break;
+                case 3:
+                    resultHtml = `
+                        <div class="result-content">
+                            <h3 class="result-title">依赖外国援助</h3>
+                            <p class="result-text">你选择了依赖外国援助的路线。然而，外部力量各有自己的利益考量，无法真正帮助中国革命。</p>
+                            <p class="result-text"><strong>教训：</strong>中国革命必须坚持独立自主，不能依赖外部力量。</p>
+                            <div style="margin-top: 20px;">
+                                <button class="btn-next" onclick="nextScene(4)">重新选择革命道路</button>
+                            </div>
+                        </div>
+                    `;
+                    resultTitle = '错误的道路';
+                    break;
+            }
+             
+            document.getElementById('revolution-result').innerHTML = resultHtml;
+            document.getElementById('revolution-result-title').textContent = resultTitle;
+            nextScene(5);
+        }
+         
+        function restartGame() {
+            userChoices = [];
+            currentScene = 1;
+            document.getElementById('scene6').classList.remove('active');
+            document.getElementById('scene1').classList.add('active');
+             
+            // 清除输入框内容
+            document.getElementById('reflection-input').value = '';
+            document.getElementById('student-name-input').value = '';
+        }
+         
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('location-modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
