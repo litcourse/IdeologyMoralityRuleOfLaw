@@ -1,2956 +1,1839 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>阶梯之间：驼铃与马帮</title>
-  <style>
-    :root{
-      --bg:#efe5cf;
-      --bg-deep:#e2d4b4;
-      --paper:rgba(255,251,242,0.84);
-      --paper-strong:rgba(255,248,235,0.97);
-      --ink:#30261d;
-      --ink-soft:#5b4a39;
-      --line:rgba(87,68,48,.18);
-      --red:#8f2f26;
-      --gold:#c49a47;
-      --green:#4d6b54;
-      --blue:#6b8391;
-      --shadow:0 10px 28px rgba(70,52,35,.14);
-      --shadow-soft:0 6px 18px rgba(70,52,35,.08);
-      --radius:22px;
-      --radius-sm:14px;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>阶梯之路：中华民族交融模拟贸易游戏</title>
+<style>
+:root{
+    --ink:#1f2a25;
+    --ink-soft:#4a5c52;
+    --paper:#f7f0de;
+    --gold:#b78336;
+    --red:#9f2f24;
+    --jade:#3b7a68;
+    --shadow:rgba(44,31,18,.18);
+}
+*{box-sizing:border-box}
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif;
+    color:var(--ink);
+    background:
+        radial-gradient(circle at 15% 10%,rgba(178,129,67,.22),transparent 28%),
+        radial-gradient(circle at 80% 5%,rgba(68,112,132,.22),transparent 25%),
+        radial-gradient(circle at 50% 90%,rgba(69,118,99,.18),transparent 30%),
+        linear-gradient(135deg,#f7f0de,#ead8ad);
+    overflow-x:hidden;
+}
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+        linear-gradient(rgba(80,55,30,.03) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(80,55,30,.025) 1px,transparent 1px);
+    background-size:28px 28px;
+    mix-blend-mode:multiply;
+}
+.app{
+    width:min(1180px,96vw);
+    margin:0 auto;
+    padding:24px 0 40px;
+}
+.screen{
+    display:none;
+    animation:fadeIn .45s ease both;
+}
+.screen.active{display:block}
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(8px)}
+    to{opacity:1;transform:translateY(0)}
+}
+.hero{
+    position:relative;
+    overflow:hidden;
+    border:2px solid rgba(91,63,30,.22);
+    border-radius:28px;
+    padding:34px;
+    min-height:620px;
+    background:
+        linear-gradient(rgba(255,255,255,.62),rgba(255,255,255,.34)),
+        radial-gradient(circle at 20% 25%,rgba(130,157,139,.22),transparent 28%),
+        radial-gradient(circle at 75% 20%,rgba(160,107,67,.18),transparent 24%),
+        linear-gradient(145deg,rgba(255,255,255,.58),rgba(231,210,164,.55));
+    box-shadow:0 22px 60px var(--shadow);
+}
+.hero::after{
+    content:"山河万里";
+    position:absolute;
+    right:32px;
+    top:24px;
+    font-size:58px;
+    writing-mode:vertical-rl;
+    letter-spacing:8px;
+    color:rgba(74,50,28,.10);
+    font-family:"KaiTi","STKaiti",serif;
+    user-select:none;
+}
+.title{
+    margin:0;
+    font-family:"KaiTi","STKaiti",serif;
+    font-size:clamp(36px,6vw,72px);
+    letter-spacing:4px;
+    color:#2f2c20;
+    text-shadow:0 3px 0 rgba(255,255,255,.5);
+}
+.subtitle{
+    max-width:820px;
+    line-height:1.9;
+    font-size:18px;
+    color:var(--ink-soft);
+    margin:18px 0 22px;
+}
+.seal{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(159,47,36,.1);
+    color:var(--red);
+    border:1px solid rgba(159,47,36,.28);
+    padding:8px 14px;
+    border-radius:999px;
+    font-weight:700;
+}
+.btn{
+    border:0;
+    border-radius:16px;
+    padding:12px 18px;
+    background:linear-gradient(135deg,#3b7a68,#2a5e55);
+    color:white;
+    font-weight:800;
+    font-size:15px;
+    cursor:pointer;
+    box-shadow:0 10px 22px rgba(31,78,68,.25);
+    transition:transform .15s ease,filter .15s ease;
+}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn.secondary{
+    background:linear-gradient(135deg,#b78336,#8d5f25);
+    box-shadow:0 10px 22px rgba(143,91,31,.23);
+}
+.btn.ghost{
+    background:rgba(255,255,255,.65);
+    color:var(--ink);
+    border:1px solid rgba(75,55,33,.18);
+    box-shadow:none;
+}
+.btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+    transform:none;
+}
+.hero-actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:28px;
+}
+.mountains{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:210px;
+    opacity:.58;
+    pointer-events:none;
+}
+.identity-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-top:26px;
+}
+.identity-card,.panel,.goods-card{
+    border:1px solid rgba(80,55,28,.18);
+    border-radius:24px;
+    background:rgba(255,255,255,.62);
+    box-shadow:0 14px 30px rgba(60,40,20,.12);
+    backdrop-filter:blur(5px);
+}
+.identity-card{
+    padding:22px;
+    cursor:pointer;
+    min-height:310px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    transition:transform .18s ease,box-shadow .18s ease;
+}
+.identity-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 20px 45px rgba(60,40,20,.18);
+}
+.identity-card h3{
+    margin:0;
+    font-size:24px;
+}
+.identity-card .big-icon{
+    width:64px;
+    height:64px;
+    margin-bottom:10px;
+    display:grid;
+    place-items:center;
+    font-size:54px;
+}
+.han-building-svg{
+    width:64px;
+    height:64px;
+    display:block;
+}
+.avatar .han-building-svg{
+    width:52px;
+    height:52px;
+}
+.identity-card p{
+    color:var(--ink-soft);
+    line-height:1.7;
+    margin:12px 0;
+}
+.tag-list{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+.tag{
+    padding:5px 9px;
+    background:rgba(183,131,54,.13);
+    border:1px solid rgba(183,131,54,.25);
+    border-radius:999px;
+    font-size:12px;
+    color:#6d481c;
+    font-weight:700;
+}
+.topbar{
+    display:grid;
+    grid-template-columns:1.3fr 1.5fr 1.2fr;
+    gap:14px;
+    margin-bottom:16px;
+    align-items:stretch;
+}
+.stat-card{
+    border-radius:22px;
+    padding:16px 18px;
+    background:rgba(255,255,255,.62);
+    border:1px solid rgba(80,55,28,.16);
+    box-shadow:0 10px 24px rgba(60,40,20,.10);
+}
+.stat-title{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+    line-height:1.6;
+}
+.stat-value{
+    font-size:22px;
+    font-weight:900;
+}
+.fusion-bar{
+    height:20px;
+    border-radius:999px;
+    background:rgba(50,48,38,.12);
+    overflow:hidden;
+    margin-top:8px;
+    border:1px solid rgba(40,35,25,.12);
+}
+.fusion-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#3b7a68,#b78336,#9f2f24);
+    border-radius:999px;
+    transition:width .45s ease;
+}
+.main-layout{
+    display:grid;
+    grid-template-columns:1.25fr .85fr;
+    gap:16px;
+}
+.panel{
+    padding:18px;
+    min-height:220px;
+}
+.panel h2{
+    margin:0 0 12px;
+    font-family:"KaiTi","STKaiti",serif;
+    font-size:28px;
+    color:#2f2c20;
+}
+.map{
+    position:relative;
+    overflow:hidden;
+    height:280px;
+    border-radius:22px;
+    background:
+        linear-gradient(180deg,rgba(255,255,255,.55),rgba(238,220,179,.55)),
+        radial-gradient(circle at 18% 28%,rgba(67,107,149,.2),transparent 20%),
+        radial-gradient(circle at 56% 42%,rgba(144,111,57,.22),transparent 26%),
+        radial-gradient(circle at 82% 64%,rgba(75,129,92,.22),transparent 25%);
+    border:1px solid rgba(80,55,28,.16);
+}
+.step-zone{
+    position:absolute;
+    border:2px dashed rgba(72,55,35,.25);
+    background:rgba(255,255,255,.28);
+    border-radius:22px;
+    padding:14px;
+    transition:transform .2s ease,background .2s ease;
+}
+.step-zone.active{
+    transform:scale(1.035);
+    background:rgba(255,255,255,.62);
+    border-color:rgba(159,47,36,.55);
+    box-shadow:0 12px 26px rgba(90,50,30,.18);
+}
+.zone-1{left:4%;top:20%;width:32%;height:44%}
+.zone-2{left:35%;top:26%;width:32%;height:48%}
+.zone-3{left:66%;top:34%;width:30%;height:48%}
+.zone-title{
+    font-weight:900;
+    font-size:17px;
+}
+.zone-sub{
+    margin-top:6px;
+    color:var(--ink-soft);
+    font-size:13px;
+    line-height:1.5;
+}
+.caravan{
+    position:absolute;
+    font-size:38px;
+    left:13%;
+    top:48%;
+    transform:translate(-50%,-50%);
+    transition:left .9s ease,top .9s ease;
+    filter:drop-shadow(0 8px 8px rgba(0,0,0,.16));
+    z-index:5;
+}
+.needs-box{
+    margin-top:14px;
+    padding:14px;
+    border-radius:18px;
+    background:rgba(159,47,36,.08);
+    border:1px solid rgba(159,47,36,.20);
+    line-height:1.75;
+}
+.goal-box{
+    margin-top:12px;
+    padding:12px;
+    border-radius:16px;
+    background:rgba(59,122,104,.08);
+    border:1px solid rgba(59,122,104,.18);
+    line-height:1.65;
+    font-size:14px;
+}
+.action-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-top:14px;
+}
+.action-card{
+    text-align:left;
+    padding:16px;
+    border-radius:20px;
+    border:1px solid rgba(80,55,28,.16);
+    background:rgba(255,255,255,.58);
+    cursor:pointer;
+    transition:transform .15s ease,background .15s ease;
+    min-height:126px;
+}
+.action-card:hover{
+    transform:translateY(-3px);
+    background:rgba(255,255,255,.78);
+}
+.action-card .icon{font-size:30px}
+.action-card h3{
+    margin:8px 0 6px;
+    font-size:18px;
+}
+.action-card p{
+    margin:0;
+    color:var(--ink-soft);
+    line-height:1.5;
+    font-size:13px;
+}
+.inventory-list,.log-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    max-height:310px;
+    overflow:auto;
+    padding-right:4px;
+}
+.item-row{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:14px;
+    background:rgba(255,255,255,.56);
+    border:1px solid rgba(80,55,28,.10);
+    font-size:14px;
+}
+.log-item{
+    padding:10px 12px;
+    border-left:4px solid rgba(183,131,54,.7);
+    background:rgba(255,255,255,.48);
+    border-radius:12px;
+    line-height:1.55;
+    font-size:14px;
+    color:var(--ink-soft);
+}
+.market-status{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin:12px 0 14px;
+}
+.market-stat{
+    padding:12px;
+    border-radius:16px;
+    background:rgba(255,255,255,.62);
+    border:1px solid rgba(80,55,28,.12);
+}
+.market-stat small{
+    display:block;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+}
+.market-stat strong{font-size:20px}
+.modal-mask{
+    position:fixed;
+    inset:0;
+    background:rgba(22,20,16,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    z-index:20;
+}
+.modal-mask.active{display:flex}
+.modal{
+    width:min(960px,96vw);
+    max-height:90vh;
+    overflow:auto;
+    border-radius:28px;
+    background:
+        linear-gradient(rgba(255,255,255,.86),rgba(255,255,255,.78)),
+        var(--paper);
+    border:2px solid rgba(93,63,29,.25);
+    box-shadow:0 26px 80px rgba(0,0,0,.35);
+    padding:24px;
+    animation:pop .2s ease both;
+}
+@keyframes pop{
+    from{transform:scale(.96);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+.modal h2{
+    margin:0 0 12px;
+    font-family:"KaiTi","STKaiti",serif;
+    font-size:32px;
+}
+.modal p{line-height:1.8}
+.market-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-top:12px;
+}
+.goods-card{padding:14px}
+.goods-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+}
+.goods-name{
+    font-size:18px;
+    font-weight:900;
+}
+.goods-meta{
+    margin-top:8px;
+    color:var(--ink-soft);
+    font-size:13px;
+    line-height:1.55;
+}
+.goods-actions{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+}
+.small-btn{
+    flex:1;
+    border:0;
+    border-radius:12px;
+    padding:9px 10px;
+    font-weight:800;
+    cursor:pointer;
+    background:rgba(59,122,104,.14);
+    color:#28584d;
+    border:1px solid rgba(59,122,104,.22);
+    line-height:1.45;
+}
+.small-btn small{
+    font-weight:700;
+    opacity:.86;
+}
+.small-btn.sell{
+    background:rgba(183,131,54,.14);
+    color:#7a4f1e;
+    border:1px solid rgba(183,131,54,.25);
+}
+.small-btn:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}
+.travel-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-top:14px;
+}
+.travel-card{
+    padding:18px;
+    border-radius:22px;
+    border:1px solid rgba(80,55,28,.17);
+    background:rgba(255,255,255,.58);
+}
+.travel-card h3{margin:0 0 8px}
+.dialogue{
+    display:grid;
+    grid-template-columns:86px 1fr;
+    gap:14px;
+    align-items:start;
+    margin:16px 0;
+    padding:16px;
+    background:rgba(255,255,255,.55);
+    border-radius:20px;
+    border:1px solid rgba(80,55,28,.12);
+}
+.avatar{
+    width:76px;
+    height:76px;
+    border-radius:24px;
+    display:grid;
+    place-items:center;
+    font-size:42px;
+    background:linear-gradient(135deg,rgba(183,131,54,.2),rgba(59,122,104,.18));
+    border:1px solid rgba(80,55,28,.16);
+}
+.dialogue-text{line-height:1.8}
+.choice-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:14px;
+}
+.choice{
+    text-align:left;
+    border:1px solid rgba(80,55,28,.16);
+    background:rgba(255,255,255,.62);
+    border-radius:16px;
+    padding:13px 14px;
+    cursor:pointer;
+    font-weight:800;
+    color:var(--ink);
+}
+.choice:hover{background:rgba(255,255,255,.88)}
+.ending{
+    text-align:center;
+    padding:42px 34px;
+}
+.ending h1{
+    font-family:"KaiTi","STKaiti",serif;
+    font-size:clamp(38px,6vw,70px);
+    margin:0 0 20px;
+    color:var(--red);
+}
+.ending p{
+    text-align:left;
+    max-width:920px;
+    margin:0 auto 22px;
+    font-size:19px;
+    line-height:2.05;
+    color:var(--ink);
+}
+.footer-note{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13px;
+    margin-top:16px;
+}
+.result-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin:22px 0;
+}
+.result-card{
+    padding:18px;
+    border-radius:22px;
+    background:rgba(255,255,255,.64);
+    border:1px solid rgba(80,55,28,.16);
+    box-shadow:0 12px 28px rgba(60,40,20,.10);
+    text-align:center;
+}
+.result-card small{
+    display:block;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+}
+.result-card strong{
+    font-size:28px;
+    color:#2f2c20;
+}
+.result-section{
+    margin-top:18px;
+    padding:18px;
+    border-radius:22px;
+    background:rgba(255,255,255,.58);
+    border:1px solid rgba(80,55,28,.16);
+    text-align:left;
+}
+.result-section h2{
+    margin:0 0 12px;
+    font-family:"KaiTi","STKaiti",serif;
+    font-size:28px;
+}
+.result-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.result-item{
+    padding:12px 14px;
+    border-radius:14px;
+    background:rgba(255,255,255,.58);
+    border-left:4px solid rgba(183,131,54,.75);
+    line-height:1.7;
+    color:var(--ink-soft);
+}
+.result-item.good{
+    border-left-color:rgba(59,122,104,.85);
+}
+.result-badge-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:8px;
+}
+.result-badge{
+    padding:6px 10px;
+    border-radius:999px;
+    background:rgba(59,122,104,.10);
+    border:1px solid rgba(59,122,104,.20);
+    color:#28584d;
+    font-weight:800;
+    font-size:13px;
+}
+.result-comment{
+    font-size:18px;
+    line-height:1.9;
+    color:var(--ink);
+}
+@media(max-width:900px){
+    .identity-grid,.topbar,.main-layout,.market-grid,.travel-grid,.action-grid,.market-status,.result-grid{
+        grid-template-columns:1fr;
     }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      color:var(--ink);
-      font-family:"Source Han Sans CN","Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;
-      background:
-        radial-gradient(circle at 10% 12%, rgba(72,60,43,.08), transparent 18%),
-        radial-gradient(circle at 87% 18%, rgba(72,60,43,.08), transparent 16%),
-        radial-gradient(circle at 20% 86%, rgba(72,60,43,.05), transparent 18%),
-        linear-gradient(135deg, #f6efdf 0%, var(--bg) 42%, var(--bg-deep) 100%);
-      overflow-x:hidden;
-    }
-
-    body::before,
-    body::after{
-      content:"";
-      position:fixed;
-      pointer-events:none;
-      z-index:0;
-      filter:blur(2px);
-      opacity:.18;
-    }
-
-    body::before{
-      width:380px;height:380px;left:-80px;top:-60px;
-      background:radial-gradient(circle, rgba(75,59,41,.3) 0%, rgba(75,59,41,.12) 28%, transparent 62%);
-    }
-
-    body::after{
-      width:420px;height:420px;right:-120px;bottom:-90px;
-      background:radial-gradient(circle, rgba(75,59,41,.28) 0%, rgba(75,59,41,.1) 26%, transparent 62%);
-    }
-
-    .container{
-      position:relative;
-      z-index:1;
-      width:min(1480px, calc(100% - 28px));
-      margin:18px auto 28px;
-    }
-
-    .hidden{display:none !important}
-
-    .card{
-      background:var(--paper);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      backdrop-filter: blur(4px);
-    }
-
-    .subcard{
-      background:var(--paper-strong);
-      border:1px solid rgba(87,68,48,.12);
-      border-radius:var(--radius-sm);
-      box-shadow:var(--shadow-soft);
-    }
-
-    .seal{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:56px;height:56px;
-      background:linear-gradient(180deg, #a73a2f, #81271f);
-      color:#fff6e6;
-      border-radius:16px;
-      font-weight:800;
-      letter-spacing:2px;
-      box-shadow:0 8px 16px rgba(130,39,31,.22);
-      flex:0 0 auto;
-    }
-
-    .ink-title{
-      margin:0;
-      font-size:clamp(1.85rem, 3.2vw, 3.1rem);
-      letter-spacing:.06em;
-      line-height:1.1;
-    }
-
-    .muted{color:var(--ink-soft)}
-    .small{font-size:.92rem}
-    .tiny{font-size:.82rem}
-
-    button{
-      border:none;
-      cursor:pointer;
-      font:inherit;
-      transition:.18s ease;
-    }
-
-    .btn{
-      padding:12px 18px;
-      border-radius:999px;
-      color:#fff6ea;
-      background:linear-gradient(180deg, #8f4034, #733028);
-      box-shadow:0 8px 16px rgba(110,44,34,.18);
-    }
-
-    .btn:hover{transform:translateY(-1px)}
-
-    .btn:disabled{
-      opacity:.45;
-      cursor:not-allowed;
-      transform:none;
-    }
-
-    .btn-ghost{
-      padding:11px 16px;
-      border-radius:999px;
-      background:rgba(255,252,245,.75);
-      color:var(--ink);
-      border:1px solid rgba(87,68,48,.16);
-    }
-
-    .btn-soft{
-      padding:10px 14px;
-      border-radius:12px;
-      background:#f7f0e4;
-      color:var(--ink);
-      border:1px solid rgba(87,68,48,.15);
-    }
-
-    .btn-choice{
-      width:100%;
-      text-align:left;
-      padding:16px 16px;
-      border-radius:16px;
-      background:linear-gradient(180deg, #fffaf0, #f5ecd9);
-      border:1px solid rgba(87,68,48,.14);
-      color:var(--ink);
-      box-shadow:var(--shadow-soft);
-    }
-
-    .btn-choice:hover{
-      transform:translateY(-1px);
-      border-color:rgba(143,47,38,.28);
-    }
-
-    .btn-choice strong{
-      display:block;
-      margin-bottom:6px;
-      font-size:1rem;
-    }
-
-    .start-screen{
-      min-height:calc(100vh - 52px);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .start-wrap{
-      width:100%;
-      display:grid;
-      gap:18px;
-    }
-
     .hero{
-      padding:24px 26px;
-      display:grid;
-      grid-template-columns:1.15fr .85fr;
-      gap:18px;
-    }
-
-    .hero-main{
-      display:flex;
-      gap:16px;
-      align-items:flex-start;
-    }
-
-    .hero-copy p{
-      margin:8px 0 0;
-      line-height:1.8;
-      color:var(--ink-soft);
-    }
-
-    .hero-note{
-      padding:18px 20px;
-      display:grid;
-      gap:10px;
-      align-content:center;
-      background:linear-gradient(180deg, rgba(255,250,242,.95), rgba(247,237,220,.92));
-    }
-
-    .hero-note h3{
-      margin:0;
-      font-size:1.1rem;
-    }
-
-    .hero-note ul{
-      margin:0;
-      padding-left:1.15rem;
-      line-height:1.85;
-      color:var(--ink-soft);
-    }
-
-    .role-grid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:18px;
-    }
-
-    .role-card{
-      overflow:hidden;
-      display:grid;
-      grid-template-rows:auto auto 1fr auto;
-    }
-
-    .role-art{padding:14px 14px 0}
-    .role-content{
-      padding:0 16px 16px;
-      display:grid;
-      gap:12px;
-    }
-
-    .role-tag{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:.88rem;
-      background:#f8f1e1;
-      border:1px solid rgba(87,68,48,.12);
-      width:max-content;
-    }
-
-    .role-card h3{
-      margin:0;
-      font-size:1.16rem;
-      line-height:1.4;
-    }
-
-    .role-card p{
-      margin:0;
-      color:var(--ink-soft);
-      line-height:1.75;
-      font-size:.95rem;
-    }
-
-    .tag-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      padding:4px 8px;
-      border-radius:999px;
-      font-size:.78rem;
-      line-height:1;
-      border:1px solid rgba(87,68,48,.12);
-      background:#fbf6ea;
-    }
-
-    .tag.local-tag{background:rgba(77,107,84,.12); color:#35513e}
-    .tag.need-tag{background:rgba(143,47,38,.11); color:#7e2c23}
-    .tag.route-tag{background:rgba(107,131,145,.12); color:#405766}
-    .tag.warn-tag{background:rgba(180,147,73,.15); color:#77561e}
-    .tag.done-tag{background:rgba(77,107,84,.15); color:#2f533a}
-
-    .game-screen{
-      display:grid;
-      gap:18px;
-    }
-
-    .topbar{
-      padding:18px 22px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-    }
-
-    .topbar-left{
-      display:flex;
-      gap:14px;
-      align-items:center;
-    }
-
-    .topbar h1{
-      margin:0;
-      font-size:1.7rem;
-      letter-spacing:.08em;
-    }
-
-    .topbar p{
-      margin:6px 0 0;
-      color:var(--ink-soft);
-    }
-
-    .hero-grid{
-      display:grid;
-      grid-template-columns:1.05fr .95fr;
-      gap:18px;
-    }
-
-    .scene-card{
-      overflow:hidden;
-      display:grid;
-      grid-template-rows:auto 1fr;
-    }
-
-    .scene-art{padding:16px 16px 0}
-    .scene-body{
-      padding:16px 18px 20px;
-      display:grid;
-      gap:12px;
-    }
-
-    .scene-body h2{
-      margin:0;
-      font-size:1.36rem;
-    }
-
-    .scene-body p{
-      margin:0;
-      line-height:1.85;
-      color:var(--ink-soft);
-    }
-
-    .status-card{
-      padding:18px;
-      display:grid;
-      gap:14px;
-    }
-
-    .metric-grid{
-      display:grid;
-      grid-template-columns:repeat(4, 1fr);
-      gap:12px;
-    }
-
-    .metric{
-      padding:14px 14px;
-      border-radius:18px;
-      background:rgba(255,251,242,.88);
-      border:1px solid rgba(87,68,48,.12);
-      box-shadow:var(--shadow-soft);
-    }
-
-    .metric .label{
-      font-size:.82rem;
-      color:var(--ink-soft);
-      margin-bottom:6px;
-    }
-
-    .metric .value{
-      font-size:1.06rem;
-      font-weight:800;
-      line-height:1.35;
-    }
-
-    .meter-wrap{
-      display:grid;
-      gap:10px;
-      padding:16px;
-    }
-
-    .meter-title{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      font-weight:700;
-    }
-
-    .meter{
-      height:16px;
-      border-radius:999px;
-      background:#e7dcc2;
-      overflow:hidden;
-      border:1px solid rgba(87,68,48,.1);
-    }
-
-    .meter > span{
-      display:block;
-      height:100%;
-      width:0%;
-      border-radius:999px;
-      transition:width .25s ease;
-    }
-
-    .meter.integration > span{
-      background:linear-gradient(90deg, #8b2f25, #c49a47 55%, #5d815e);
-    }
-
-    .meter.time > span{
-      background:linear-gradient(90deg, #9a3c2d, #d49c49 62%, #d7c7a1);
-    }
-
-    .status-strip{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
-      gap:12px;
-    }
-
-    .strip{
-      padding:14px;
-      border-radius:16px;
-      background:rgba(255,248,237,.9);
-      border:1px solid rgba(87,68,48,.12);
-      line-height:1.7;
-      color:var(--ink-soft);
-    }
-
-    .strip strong{color:var(--ink)}
-
-    .risk-high{
-      color:var(--red);
-      font-weight:800;
-    }
-
-    .risk-mid{
-      color:#7f5a20;
-      font-weight:800;
-    }
-
-    .main-grid{
-      display:grid;
-      grid-template-columns:1.04fr .96fr;
-      gap:18px;
-      align-items:start;
-    }
-
-    .left-stack,.right-stack{
-      display:grid;
-      gap:18px;
-    }
-
-    .quest-card{
-      padding:18px;
-      display:grid;
-      gap:14px;
-    }
-
-    .quest-card h3,
-    .panel-card h3,
-    .pack-card h3,
-    .log-card h3{
-      margin:0;
-      font-size:1.12rem;
-    }
-
-    .quest-body{
-      line-height:1.9;
-      color:var(--ink-soft);
-    }
-
-    .chapter-box{
-      padding:14px;
-      border-radius:18px;
-      border:1px solid rgba(87,68,48,.12);
-      background:rgba(255,250,242,.92);
-      display:grid;
-      gap:10px;
-    }
-
-    .chapter-head{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .chapter-head h4{
-      margin:0;
-      font-size:1.04rem;
-    }
-
-    .objective-list{
-      display:grid;
-      gap:8px;
-    }
-
-    .objective-item{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(87,68,48,.1);
-      background:rgba(255,248,239,.9);
-      font-size:.92rem;
-      line-height:1.7;
-    }
-
-    .objective-item.done{
-      background:rgba(243,251,244,.96);
-      border-color:rgba(77,107,84,.18);
-    }
-
-    .panel-card{
-      padding:18px;
-      display:grid;
-      gap:16px;
-    }
-
-    .tabbar{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
-    .tab-btn{
-      padding:11px 16px;
-      border-radius:999px;
-      background:#f7f0e4;
-      color:var(--ink);
-      border:1px solid rgba(87,68,48,.12);
-    }
-
-    .tab-btn.active{
-      background:linear-gradient(180deg, #8f4034, #743129);
-      color:#fff8ea;
-      box-shadow:0 8px 18px rgba(110,44,34,.2);
-    }
-
-    .goods-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(182px, 1fr));
-      gap:14px;
-    }
-
-    .goods-card{
-      padding:14px;
-      border-radius:18px;
-      background:linear-gradient(180deg, rgba(255,251,244,.98), rgba(248,239,225,.96));
-      border:1px solid rgba(87,68,48,.12);
-      display:grid;
-      gap:10px;
-      box-shadow:var(--shadow-soft);
-    }
-
-    .goods-card.local{
-      box-shadow: inset 0 0 0 1px rgba(77,107,84,.16), var(--shadow-soft);
-    }
-
-    .goods-card.needed{
-      box-shadow: inset 0 0 0 1px rgba(143,47,38,.15), var(--shadow-soft);
-    }
-
-    .goods-top{
-      display:grid;
-      grid-template-columns:46px 1fr;
-      gap:10px;
-      align-items:center;
-    }
-
-    .goods-icon{
-      width:46px;height:46px;
-      border-radius:14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:rgba(255,255,255,.6);
-      font-size:1.55rem;
-      border:1px solid rgba(87,68,48,.1);
-    }
-
-    .goods-title{
-      font-weight:800;
-      font-size:1rem;
-    }
-
-    .goods-desc{
-      color:var(--ink-soft);
-      font-size:.87rem;
-      line-height:1.65;
-    }
-
-    .price-row,
-    .owned-row{
-      display:flex;
-      justify-content:space-between;
-      gap:8px;
-      font-size:.9rem;
-    }
-
-    .goods-actions{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:8px;
-    }
-
-    .goods-actions .btn-soft{
-      padding:10px 8px;
-      text-align:center;
-    }
-
-    .travel-intro,
-    .culture-tip{
-      line-height:1.8;
-      color:var(--ink-soft);
-      padding:12px 14px;
-    }
-
-    .travel-grid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:14px;
-    }
-
-    .travel-card{
-      padding:12px;
-      display:grid;
-      gap:10px;
-      border-radius:18px;
-      background:linear-gradient(180deg, rgba(255,251,244,.98), rgba(248,239,225,.96));
-      border:1px solid rgba(87,68,48,.12);
-      box-shadow:var(--shadow-soft);
-    }
-
-    .travel-card h4{
-      margin:0;
-      font-size:1rem;
-    }
-
-    .travel-card p{
-      margin:0;
-      line-height:1.7;
-      color:var(--ink-soft);
-      font-size:.9rem;
-    }
-
-    .travel-meta{
-      display:grid;
-      gap:8px;
-    }
-
-    .culture-box{
-      display:grid;
-      gap:14px;
-    }
-
-    .dialogue-list{
-      display:grid;
-      gap:10px;
-    }
-
-    .dialogue{
-      display:grid;
-      grid-template-columns:58px 1fr;
-      gap:10px;
-      align-items:start;
-    }
-
-    .dialogue.right{
-      grid-template-columns:1fr 58px;
-    }
-
-    .dialogue.right .portrait{order:2}
-    .dialogue.right .speech{order:1}
-
-    .portrait{
-      width:58px;
-      height:58px;
-      border-radius:16px;
-      overflow:hidden;
-      border:1px solid rgba(87,68,48,.12);
-      background:#fff;
-      box-shadow:var(--shadow-soft);
-    }
-
-    .speech{
-      padding:12px 14px;
-      border-radius:16px;
-      border:1px solid rgba(87,68,48,.12);
-      background:rgba(255,249,239,.96);
-      line-height:1.8;
-      color:var(--ink-soft);
-    }
-
-    .speaker{
-      font-weight:800;
-      color:var(--ink);
-      margin-bottom:4px;
-    }
-
-    .pack-card{
-      padding:18px;
-      display:grid;
-      gap:14px;
-    }
-
-    .pack-grid{
-      display:grid;
-      gap:10px;
-      max-height:560px;
-      overflow:auto;
-      padding-right:2px;
-    }
-
-    .pack-item{
-      display:grid;
-      grid-template-columns:48px 1fr auto;
-      gap:12px;
-      align-items:center;
-      padding:12px 14px;
-      border-radius:16px;
-      background:rgba(255,249,239,.95);
-      border:1px solid rgba(87,68,48,.12);
-    }
-
-    .pack-item .icon{
-      width:48px;height:48px;
-      border-radius:14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:rgba(255,255,255,.6);
-      font-size:1.5rem;
-      border:1px solid rgba(87,68,48,.1);
-    }
-
-    .pack-item .name{
-      font-weight:800;
-      margin-bottom:4px;
-    }
-
-    .pack-item .origin{
-      color:var(--ink-soft);
-      line-height:1.6;
-      font-size:.85rem;
-    }
-
-    .pack-item .qty{
-      font-weight:900;
-      font-size:1.1rem;
-      color:var(--red);
-      min-width:44px;
-      text-align:right;
-    }
-
-    .empty{
-      padding:18px;
-      border-radius:16px;
-      border:1px dashed rgba(87,68,48,.18);
-      color:var(--ink-soft);
-      text-align:center;
-      line-height:1.8;
-      background:rgba(255,250,242,.76);
-    }
-
-    .log-card{
-      padding:18px;
-      display:grid;
-      gap:14px;
-    }
-
-    .log-list{
-      display:grid;
-      gap:10px;
-      max-height:520px;
-      overflow:auto;
-      padding-right:2px;
-    }
-
-    .log-item{
-      padding:12px 14px;
-      border-radius:16px;
-      line-height:1.75;
-      background:rgba(255,249,239,.95);
-      border:1px solid rgba(87,68,48,.12);
-    }
-
-    .log-item.important{
-      border-left:5px solid var(--red);
-      background:rgba(255,244,239,.96);
-    }
-
-    .log-item.bonus{
-      border-left:5px solid var(--green);
-      background:rgba(244,251,245,.96);
-    }
-
-    .log-item.warn{
-      border-left:5px solid #8a7b62;
-      background:rgba(250,247,240,.96);
-    }
-
-    .scene-svg{
-      display:block;
-      width:100%;
-      height:auto;
-      border-radius:18px;
-      border:1px solid rgba(87,68,48,.12);
-      background:#f7f1e5;
-    }
-
-    .scene-badges{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-
-    .orders-grid{
-      display:grid;
-      gap:10px;
-    }
-
-    .order-card{
-      padding:13px 14px;
-      border-radius:16px;
-      border:1px solid rgba(87,68,48,.12);
-      background:rgba(255,249,239,.95);
-      display:grid;
-      gap:8px;
-    }
-
-    .order-top{
-      display:flex;
-      justify-content:space-between;
-      gap:8px;
-      align-items:flex-start;
-    }
-
-    .order-card h4{
-      margin:0;
-      font-size:1rem;
-    }
-
-    .order-card p{
-      margin:0;
-      color:var(--ink-soft);
-      line-height:1.7;
-      font-size:.9rem;
-    }
-
-    .action-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-
-    .modal{
-      position:fixed;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      z-index:99;
-      background:rgba(32,24,18,.46);
-      backdrop-filter: blur(3px);
-    }
-
-    .modal-card{
-      width:min(820px, 100%);
-      padding:22px;
-      border-radius:28px;
-      background:linear-gradient(180deg, rgba(255,251,243,.98), rgba(245,235,218,.98));
-      border:1px solid rgba(87,68,48,.16);
-      box-shadow:0 22px 50px rgba(20,14,10,.26);
-      display:grid;
-      gap:16px;
-    }
-
-    .modal-head{
-      display:flex;
-      gap:14px;
-      align-items:flex-start;
-    }
-
-    .modal-emoji{
-      width:66px;height:66px;
-      flex:0 0 auto;
-      border-radius:18px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:1.8rem;
-      background:rgba(255,255,255,.65);
-      border:1px solid rgba(87,68,48,.12);
-    }
-
-    .modal-card h2{
-      margin:0 0 6px;
-      font-size:1.4rem;
-    }
-
-    .modal-card p{
-      margin:0;
-      line-height:1.9;
-      color:var(--ink-soft);
-    }
-
-    .chapter-reward{
-      padding:14px;
-      border-radius:16px;
-      border:1px solid rgba(87,68,48,.12);
-      background:rgba(255,250,242,.92);
-      line-height:1.85;
-      color:var(--ink-soft);
-    }
-
-    .ending-text{
-      line-height:2;
-      color:var(--ink-soft);
-      font-size:1rem;
-    }
-
-    .summary-grid{
-      display:grid;
-      grid-template-columns:repeat(4, 1fr);
-      gap:12px;
-    }
-
-    .summary-box{
-      padding:14px;
-      border-radius:16px;
-      border:1px solid rgba(87,68,48,.12);
-      background:rgba(255,250,242,.9);
-      text-align:center;
-    }
-
-    .summary-box .num{
-      display:block;
-      font-size:1.45rem;
-      font-weight:900;
-      color:var(--red);
-      margin-top:6px;
-    }
-
-    @media (max-width: 1180px){
-      .hero,
-      .hero-grid,
-      .main-grid{
-        grid-template-columns:1fr;
-      }
-      .travel-grid{
-        grid-template-columns:1fr;
-      }
-    }
-
-    @media (max-width: 980px){
-      .role-grid{
-        grid-template-columns:1fr;
-      }
-      .metric-grid,
-      .status-strip,
-      .summary-grid{
-        grid-template-columns:repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 680px){
-      .container{width:min(100% - 16px, 1480px)}
-      .hero, .topbar, .scene-body, .status-card, .quest-card, .panel-card, .pack-card, .log-card{
-        padding-left:14px;padding-right:14px;
-      }
-      .metric-grid,
-      .status-strip,
-      .summary-grid{
-        grid-template-columns:1fr;
-      }
-      .goods-grid{
-        grid-template-columns:1fr;
-      }
-      .topbar{
-        align-items:flex-start;
-        flex-direction:column;
-      }
-      .hero-main{
-        flex-direction:column;
-      }
-      .dialogue,
-      .dialogue.right{
-        grid-template-columns:48px 1fr;
-      }
-      .dialogue.right .portrait{order:0}
-      .dialogue.right .speech{order:0}
-      .portrait{width:48px;height:48px}
-    }
-  </style>
+        padding:22px;
+        min-height:auto;
+    }
+    .hero::after{display:none}
+    .map{height:330px}
+    .zone-1,.zone-2,.zone-3{
+        left:6%;
+        width:88%;
+        height:28%;
+    }
+    .zone-1{top:4%}
+    .zone-2{top:36%}
+    .zone-3{top:68%}
+    .caravan{left:50%!important}
+}
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <section id="startScreen" class="start-screen"></section>
+<div class="app">
 
-    <section id="gameScreen" class="game-screen hidden">
-      <header class="topbar card">
-        <div class="topbar-left">
-          <div class="seal">商路</div>
-          <div>
-            <h1>驼铃与马帮</h1>
-            <p id="subtitle">第一人称剧情与模拟贸易游戏</p>
-          </div>
+<section id="startScreen" class="screen active">
+    <div class="hero">
+        <div class="seal">第一人称剧情贸易模拟</div>
+        <h1 class="title">阶梯之路</h1>
+        <p class="subtitle">
+            你将从中国地理环境三级阶梯中的一个区域出发，带着本地物产走向远方。
+            高寒牧区、草原山地与农耕核心区因地理环境不同而拥有不同资源，也因此产生了互通有无的需要。
+            在一次次交易、远行与对话中，理解各民族经济社会文化交流交往交融的历史逻辑。
+        </p>
+        <div class="hero-actions">
+            <button class="btn" onclick="showIdentityScreen()">开始旅程</button>
+            <button class="btn ghost" onclick="openGuide()">玩法说明</button>
         </div>
-        <button id="restartBtn" class="btn-ghost">重新启程</button>
-      </header>
-
-      <section class="hero-grid">
-        <article class="scene-card card">
-          <div id="sceneArt" class="scene-art"></div>
-          <div id="sceneBody" class="scene-body"></div>
-        </article>
-
-        <article class="status-card card">
-          <div id="metricGrid" class="metric-grid"></div>
-
-          <div class="meter-wrap subcard">
-            <div class="meter-title">
-              <span>中华民族交融度</span>
-              <span id="integrationLabel">0 / 90</span>
-            </div>
-            <div class="meter integration"><span id="integrationBar"></span></div>
-            <div class="tiny muted">完成主线章节、交付互通订单、进行积极交流，才是提升交融度的主要方式。</div>
-          </div>
-
-          <div class="meter-wrap subcard">
-            <div class="meter-title">
-              <span>商路倒计时</span>
-              <span id="timeLabel">0 / 0 日</span>
-            </div>
-            <div class="meter time"><span id="timeBar"></span></div>
-            <div class="tiny muted">买卖、旅行、交流与休整都会消耗时日；时限耗尽前若未完成使命，将迎来失败结局。</div>
-          </div>
-
-          <div id="statusStrip" class="status-strip"></div>
-        </article>
-      </section>
-
-      <section class="main-grid">
-        <div class="left-stack">
-          <article class="quest-card card">
-            <h3>主线章节与行路提示</h3>
-            <div id="chapterBox"></div>
-            <div id="missionBox" class="quest-body"></div>
-            <div id="ordersBox" class="orders-grid"></div>
-          </article>
-
-          <article class="panel-card card">
-            <h3>行动面板</h3>
-            <div class="tabbar">
-              <button class="tab-btn" data-tab="market">市场交易</button>
-              <button class="tab-btn" data-tab="travel">组建商队探索</button>
-              <button class="tab-btn" data-tab="culture">文化交流</button>
-              <button class="tab-btn" data-tab="camp">商队休整</button>
-            </div>
-            <div id="actionPanel"></div>
-          </article>
-        </div>
-
-        <div class="right-stack">
-          <article class="pack-card card">
-            <h3>背包与货物</h3>
-            <div id="packBox" class="pack-grid"></div>
-          </article>
-
-          <article class="log-card card">
-            <h3>旅途记事</h3>
-            <div id="logBox" class="log-list"></div>
-          </article>
-        </div>
-      </section>
-    </section>
-  </div>
-
-  <div id="eventModal" class="modal hidden"></div>
-  <div id="endingModal" class="modal hidden"></div>
-
-  <script>
-    const GOODS = {
-      yak:        { name: '牦牛',     icon: '🐂', base: 20, origin: 1, desc: '高寒牧区的重要牲畜，能运载也能供给。' },
-      saffron:    { name: '藏红花',   icon: '🌺', base: 24, origin: 1, desc: '高原珍贵香料与药材，可归入藏药。' },
-      cordyceps:  { name: '冬虫夏草', icon: '🍄', base: 30, origin: 1, desc: '高原药材，在农耕区极受看重。' },
-      barley:     { name: '青稞',     icon: '🌾', base: 14, origin: 1, desc: '高原主粮，耐寒耐瘠薄。' },
-      horse:      { name: '骏马',     icon: '🐎', base: 36, origin: 2, desc: '草原与山地的重要交通与战略物资。' },
-      fur:        { name: '皮毛',     icon: '🧥', base: 22, origin: 2, desc: '御寒所需，在寒冷季节更受欢迎。' },
-      dairy:      { name: '乳制品',   icon: '🥛', base: 16, origin: 2, desc: '牧区奶食，便于补给与交易。' },
-      silver:     { name: '银饰',     icon: '💍', base: 28, origin: 2, desc: '山地手工银饰，苗族工艺尤具特色。' },
-      silk:       { name: '丝绸',     icon: '🧵', base: 26, origin: 3, desc: '农耕区精美织物，是跨区域贸易热门货。' },
-      porcelain:  { name: '瓷器',     icon: '🏺', base: 24, origin: 3, desc: '窑火所成，既实用也富审美价值。' },
-      tea:        { name: '茶叶',     icon: '🍵', base: 20, origin: 3, desc: '平原与山地茶园所产，是高原和草原要货。' },
-      iron:       { name: '铁器',     icon: '⚒️', base: 24, origin: 3, desc: '生产与防务的重要器具，是战略物资。' },
-      grain:      { name: '粮食',     icon: '🍚', base: 15, origin: 3, desc: '农耕文明核心区稳定产出的基础物资。' }
-    };
-
-    const REGIONS = {
-      1: {
-        id: 1,
-        stair: '第一阶梯',
-        title: '高寒牧区',
-        name: '青藏高原',
-        peoples: '藏族',
-        localGoods: ['yak','saffron','cordyceps','barley'],
-        needs: ['iron','tea','silk']
-      },
-      2: {
-        id: 2,
-        stair: '第二阶梯',
-        title: '草原游牧区与高原山地',
-        name: '内蒙古草原、云贵高原、黄土高原',
-        peoples: '蒙古族、回族、苗族',
-        localGoods: ['horse','fur','dairy','silver'],
-        needs: ['grain','silk','porcelain','iron']
-      },
-      3: {
-        id: 3,
-        stair: '第三阶梯',
-        title: '农耕文明核心区',
-        name: '华北平原、长江中下游平原、四川盆地',
-        peoples: '汉族',
-        localGoods: ['silk','porcelain','tea','iron','grain'],
-        needs: ['horse','fur','saffron','cordyceps']
-      }
-    };
-
-    const ROLES = [
-      {
-        id: 'tibetan',
-        region: 1,
-        title: '第一阶梯 · 藏族商队青年',
-        shortTitle: '藏族商队青年',
-        motto: '我生于高原，懂得山口艰险，也懂得互通有无的珍贵。',
-        intro: '寒冬将至，我们需要中原的铁器来打造工具，也需要茶叶来熬制酥油茶，还盼着丝绸越过山口来到高原。我决定带上牦牛、青稞和药材，走下雪线，去寻找能够让部落更兴旺的商路。',
-        money: 118,
-        stamina: 8,
-        startGoods: { yak: 2, barley: 3, saffron: 1, cordyceps: 1 }
-      },
-      {
-        id: 'steppe',
-        region: 2,
-        title: '第二阶梯 · 草原与山地商旅',
-        shortTitle: '草原与山地商旅',
-        motto: '我行走于草浪与山路之间，常在多民族集市中往来。',
-        intro: '草原有良马，山地有银饰，牧场有乳制品，但我们仍缺稳定的粮食，也盼着丝绸、瓷器和铁器。为了让马队和市集更加兴旺，我必须把本地特产带向更远的平原与高原。',
-        money: 122,
-        stamina: 8,
-        startGoods: { horse: 1, fur: 2, dairy: 2, silver: 1 }
-      },
-      {
-        id: 'han',
-        region: 3,
-        title: '第三阶梯 · 汉族商人',
-        shortTitle: '汉族商人',
-        motto: '我来自农耕沃野，也知道富庶并不意味着样样齐全。',
-        intro: '中原有丝绸、瓷器、茶叶、铁器和粮食，却仍缺战马以备交通与边防，缺皮毛以御寒，缺藏药以疗疾。我要让平原的器物走向高原与草原，也把远方的珍品带回城镇与乡里。',
-        money: 128,
-        stamina: 8,
-        startGoods: { silk: 2, porcelain: 1, tea: 2, iron: 2, grain: 3 }
-      }
-    ];
-
-    const CHAPTERS = [
-      {
-        id: 1,
-        emoji: '🧭',
-        title: '第一章：走出家乡',
-        desc: '先跨出熟悉的阶梯，亲眼看见别处的缺与需，才会明白交换为何不可避免。',
-        reward: { money: 28, integration: 14, grain: 2, stamina: 0 }
-      },
-      {
-        id: 2,
-        emoji: '⚖️',
-        title: '第二章：互市成局',
-        desc: '零散买卖不足以支撑长久来往。只有稳定的订单与往返，才会让不同区域真正互相依赖。',
-        reward: { money: 32, integration: 16, grain: 2, stamina: 0 }
-      },
-      {
-        id: 3,
-        emoji: '🍶',
-        title: '第三章：同路共饮',
-        desc: '当你在三个阶梯都留下交流的痕迹，道路便不再只是货路，也开始成为文化交流之路。',
-        reward: { money: 36, integration: 18, grain: 3, stamina: 0 }
-      },
-      {
-        id: 4,
-        emoji: '🏮',
-        title: '第四章：共同体之路',
-        desc: '此时你已经看见差异、经营互市、听见彼此的故事。现在，要把一切推向真正的认同：让交融度达到 90。',
-        reward: { money: 0, integration: 0, grain: 0, stamina: 0 }
-      }
-    ];
-
-    const state = {
-      role: null,
-      homeRegion: null,
-      currentRegion: null,
-      money: 0,
-      integration: 0,
-      stamina: 0,
-      maxStamina: 10,
-      maxDays: 60,
-      daysRemaining: 60,
-      inventory: {},
-      logs: [],
-      visitedRegions: new Set(),
-      cultureCount: {1:0,2:0,3:0},
-      eventSeen: {},
-      currentEvent: null,
-      endingShown: false,
-      failureShown: false,
-      orders: [],
-      chapter: 1,
-      stats: {
-        trades: 0,
-        sales: 0,
-        culture: 0,
-        events: 0,
-        rests: 0,
-        ordersCompleted: 0,
-        effectiveTrades: 0,
-        foreignCulture: 0
-      }
-    };
-
-    const ui = {
-      activeTab: 'market',
-      cultureChoices: []
-    };
-
-    const startScreen = document.getElementById('startScreen');
-    const gameScreen = document.getElementById('gameScreen');
-    const subtitle = document.getElementById('subtitle');
-    const sceneArt = document.getElementById('sceneArt');
-    const sceneBody = document.getElementById('sceneBody');
-    const metricGrid = document.getElementById('metricGrid');
-    const statusStrip = document.getElementById('statusStrip');
-    const missionBox = document.getElementById('missionBox');
-    const chapterBox = document.getElementById('chapterBox');
-    const ordersBox = document.getElementById('ordersBox');
-    const actionPanel = document.getElementById('actionPanel');
-    const packBox = document.getElementById('packBox');
-    const logBox = document.getElementById('logBox');
-    const integrationBar = document.getElementById('integrationBar');
-    const integrationLabel = document.getElementById('integrationLabel');
-    const timeBar = document.getElementById('timeBar');
-    const timeLabel = document.getElementById('timeLabel');
-    const eventModal = document.getElementById('eventModal');
-    const endingModal = document.getElementById('endingModal');
-
-    const SEASONS = ['春', '夏', '秋', '冬'];
-    const SAVE_KEY = 'camelCaravanSaveV2';
-
-    function resetState() {
-      state.role = null;
-      state.homeRegion = null;
-      state.currentRegion = null;
-      state.money = 0;
-      state.integration = 0;
-      state.stamina = 0;
-      state.maxStamina = 10;
-      state.maxDays = 60;
-      state.daysRemaining = 60;
-      state.inventory = {};
-      state.logs = [];
-      state.visitedRegions = new Set();
-      state.cultureCount = {1:0,2:0,3:0};
-      state.eventSeen = {};
-      state.currentEvent = null;
-      state.endingShown = false;
-      state.failureShown = false;
-      state.orders = [];
-      state.chapter = 1;
-      state.stats = {
-        trades: 0,
-        sales: 0,
-        culture: 0,
-        events: 0,
-        rests: 0,
-        ordersCompleted: 0,
-        effectiveTrades: 0,
-        foreignCulture: 0
-      };
-      ui.activeTab = 'market';
-      ui.cultureChoices = [];
-    }
-
-    function shortRegion(id){
-      return id === 1 ? '一阶' : id === 2 ? '二阶' : '三阶';
-    }
-
-    function elapsedDays(){
-      return state.maxDays - state.daysRemaining;
-    }
-
-    function seasonIndex(){
-      return Math.floor(elapsedDays() / 27) % 4;
-    }
-
-    function currentSeason(){
-      return SEASONS[seasonIndex()];
-    }
-
-    function seasonLabel(){
-      return `行旅第 ${Math.floor(elapsedDays() / 27) + 1} 季 · ${currentSeason()}`;
-    }
-
-    function stableRand(seed){
-      const x = Math.sin(seed) * 10000;
-      return x - Math.floor(x);
-    }
-
-    function pseudoVariance(regionId, good){
-      const cycle = seasonIndex() + 1;
-      let rand = Math.floor(stableRand(cycle * 101 + regionId * 17 + good.length * 13 + good.charCodeAt(0)) * 21) - 10;
-
-      if(REGIONS[regionId].localGoods.includes(good)) rand -= 7;
-      if(goodMatchesNeed(regionId, good)) rand += 12;
-
-      if(currentSeason() === '冬' && (good === 'fur' || good === 'tea')) rand += 8;
-      if(currentSeason() === '秋' && (good === 'grain' || good === 'barley')) rand += 5;
-      if(currentSeason() === '春' && good === 'horse') rand += 5;
-      return rand;
-    }
-
-    function getNeedLabel(regionId){
-      if(regionId === 3) return '战马、皮毛、藏药（如藏红花、冬虫夏草）';
-      return REGIONS[regionId].needs.map(key => GOODS[key].name).join('、');
-    }
-
-    function getLocalLabel(regionId){
-      return REGIONS[regionId].localGoods.map(key => GOODS[key].name).join('、');
-    }
-
-    function totalOf(good){
-      const lots = state.inventory[good] || [];
-      return lots.reduce((sum, lot) => sum + lot.qty, 0);
-    }
-
-    function totalGoodsCount(){
-      return Object.keys(GOODS).reduce((sum, key) => sum + totalOf(key), 0);
-    }
-
-    function addItem(good, qty = 1, acquiredAt = state.currentRegion){
-      const origin = GOODS[good].origin;
-      if(!state.inventory[good]) state.inventory[good] = [];
-      const found = state.inventory[good].find(
-        lot => lot.origin === origin && lot.acquiredAt === acquiredAt
-      );
-      if(found) found.qty += qty;
-      else state.inventory[good].push({ origin, acquiredAt, qty });
-    }
-
-    function removeItem(good, qty = 1){
-      const lots = state.inventory[good] || [];
-      const removed = [];
-      for(const lot of lots){
-        while(lot.qty > 0 && qty > 0){
-          lot.qty--;
-          qty--;
-          removed.push({ origin: lot.origin, acquiredAt: lot.acquiredAt });
-        }
-        if(qty === 0) break;
-      }
-      state.inventory[good] = lots.filter(lot => lot.qty > 0);
-      return removed;
-    }
-
-    function lotSummary(good){
-      const lots = state.inventory[good] || [];
-      return lots.map(lot => `${shortRegion(lot.origin)}产 · ${shortRegion(lot.acquiredAt)}入手 × ${lot.qty}`).join(' / ');
-    }
-
-    function goodMatchesNeed(regionId, good){
-      if(regionId === 3 && (good === 'saffron' || good === 'cordyceps')) return true;
-      return REGIONS[regionId].needs.includes(good);
-    }
-
-    function getBuyPrice(regionId, good){
-      const base = GOODS[good].base;
-      let multiplier = 1.42;
-      if(REGIONS[regionId].localGoods.includes(good)) multiplier = 0.72;
-      else if(goodMatchesNeed(regionId, good)) multiplier = 1.95;
-      return Math.max(6, Math.round(base * multiplier + pseudoVariance(regionId, good)));
-    }
-
-    function getSellPrice(regionId, good){
-      const base = GOODS[good].base;
-      let multiplier = 0.92;
-      if(REGIONS[regionId].localGoods.includes(good)) multiplier = 0.56;
-      else if(goodMatchesNeed(regionId, good)) multiplier = 1.46;
-      return Math.max(5, Math.round(base * multiplier + pseudoVariance(regionId, good)));
-    }
-
-    function calcTradeBonus(regionId, good){
-      if((good === 'tea' || good === 'iron') && (regionId === 1 || regionId === 2)) return 4;
-      if(regionId === 3 && (good === 'horse' || good === 'fur')) return 4;
-      if(regionId === 3 && (good === 'saffron' || good === 'cordyceps')) return 5;
-      if(regionId === 2 && good === 'grain') return 4;
-      if(regionId === 2 && (good === 'silk' || good === 'porcelain')) return 3;
-      if(regionId === 1 && good === 'silk') return 4;
-      return 2;
-    }
-
-    function clampIntegration(){
-      state.integration = Math.max(0, Math.min(100, state.integration));
-    }
-
-    function changeIntegration(delta){
-      state.integration += delta;
-      clampIntegration();
-    }
-
-    function addLog(text, kind = ''){
-      state.logs.unshift({ text, kind });
-      if(state.logs.length > 22) state.logs.pop();
-    }
-
-    function getRoleById(id){
-      return ROLES.find(role => role.id === id);
-    }
-
-    function passDays(days, actionName){
-      const beforeSeason = seasonIndex();
-      state.daysRemaining = Math.max(0, state.daysRemaining - days);
-      const afterSeason = seasonIndex();
-
-      if(days > 0){
-        addLog(`【时日流转】${actionName}耗去 ${days} 日。`, 'warn');
-      }
-
-      if(afterSeason !== beforeSeason){
-        addLog(`【时序变化】商路进入${currentSeason()}季，集市行情与路途难易都在悄然变化。`, 'warn');
-      }
-    }
-
-    function sceneSeasonHint(){
-      if(currentSeason() === '春') return '春路初开，马价与运输需求略有上扬。';
-      if(currentSeason() === '夏') return '夏季通行较稳，远行更适合筹备大宗贸易。';
-      if(currentSeason() === '秋') return '秋收时节，粮货行情更活跃。';
-      return '冬风渐紧，皮毛与茶叶更受欢迎，远行更需要提前备好粮食与路费。';
-    }
-
-    function getTravelRuleText(){
-      return '跨越 1 级阶梯需消耗 5 日时限，并优先消耗 1 份粮食；粮食不足时，每份差额折算为 18 铜币。课堂版已取消体力限制，重点考察路线选择、物产互补和文化交流。';
-    }
-
-
-    function getTravelCost(target){
-      const dist = Math.abs(target - state.currentRegion);
-      const grainAvailable = totalOf('grain');
-      const grainUse = Math.min(grainAvailable, dist);
-      const coinUse = (dist - grainUse) * 18;
-      return {
-        dist,
-        grainUse,
-        coinUse,
-        staminaCost: 0,
-        dayCost: dist * 5
-      };
-    }
-
-    function canTravelTo(target){
-      if(target === state.currentRegion) return false;
-      const cost = getTravelCost(target);
-      return state.money >= cost.coinUse;
-    }
-
-    function getRiskState(){
-      if(state.daysRemaining <= 12 || (state.money < 18 && totalGoodsCount() <= 2)){
-        return {
-          level:'high',
-          label:'高风险',
-          text:'倒计时、路费或货物已经非常紧张。此时更适合优先完成就近订单，避免无效往返。'
-        };
-      }
-      if(state.daysRemaining <= 28 || (state.money < 30 && totalGoodsCount() <= 2)){
-        return {
-          level:'mid',
-          label:'需谨慎',
-          text:'资源开始吃紧。长途旅行前，先核对粮食、路费和目标订单。'
-        };
-      }
-      return {
-        level:'low',
-        label:'状态稳定',
-        text:'商队仍有余裕，可以继续围绕主线筹货、旅行与交流。'
-      };
-    }
-
-    function serializeState(){
-      return {
-        roleId: state.role?.id || null,
-        homeRegion: state.homeRegion,
-        currentRegion: state.currentRegion,
-        money: state.money,
-        integration: state.integration,
-        stamina: state.stamina,
-        maxStamina: state.maxStamina,
-        maxDays: state.maxDays,
-        daysRemaining: state.daysRemaining,
-        inventory: state.inventory,
-        logs: state.logs,
-        visitedRegions: Array.from(state.visitedRegions),
-        cultureCount: state.cultureCount,
-        eventSeen: state.eventSeen,
-        endingShown: state.endingShown,
-        failureShown: state.failureShown,
-        orders: state.orders,
-        chapter: state.chapter,
-        stats: state.stats,
-        ui: {
-          activeTab: ui.activeTab,
-          cultureChoices: ui.cultureChoices
-        }
-      };
-    }
-
-    function saveGame(){
-      if(!state.role) return;
-      try{
-        localStorage.setItem(SAVE_KEY, JSON.stringify(serializeState()));
-      }catch(err){
-        console.warn('save failed', err);
-      }
-    }
-
-    function hasSavedGame(){
-      try{
-        return !!localStorage.getItem(SAVE_KEY);
-      }catch(err){
-        return false;
-      }
-    }
-
-    function clearSavedGame(){
-      try{
-        localStorage.removeItem(SAVE_KEY);
-      }catch(err){
-        console.warn('clear save failed', err);
-      }
-    }
-
-    function loadSavedGame(){
-      try{
-        const raw = localStorage.getItem(SAVE_KEY);
-        if(!raw) return false;
-        const data = JSON.parse(raw);
-        if(!data?.roleId) return false;
-
-        resetState();
-        state.role = getRoleById(data.roleId);
-        if(!state.role) return false;
-        state.homeRegion = data.homeRegion;
-        state.currentRegion = data.currentRegion;
-        state.money = data.money;
-        state.integration = data.integration;
-        state.stamina = data.stamina;
-        state.maxStamina = data.maxStamina || 10;
-        state.maxDays = data.maxDays || 60;
-        state.daysRemaining = data.daysRemaining;
-        state.inventory = data.inventory || {};
-        state.logs = data.logs || [];
-        state.visitedRegions = new Set(data.visitedRegions || []);
-        state.cultureCount = data.cultureCount || {1:0,2:0,3:0};
-        state.eventSeen = data.eventSeen || {};
-        state.currentEvent = null;
-        state.endingShown = false;
-        state.failureShown = false;
-        state.orders = data.orders || createOrders();
-        state.chapter = data.chapter || 1;
-        state.stats = data.stats || state.stats;
-        ui.activeTab = data.ui?.activeTab || 'market';
-        ui.cultureChoices = [];
-
-        startScreen.classList.add('hidden');
-        gameScreen.classList.remove('hidden');
-        addLog('【续行】你从上一次自动存档处继续出发。', 'bonus');
-        renderGame();
-        return true;
-      }catch(err){
-        console.warn('load save failed', err);
-        clearSavedGame();
-        return false;
-      }
-    }
-
-    function createOrders(){
-      return [
-        {
-          id:'o1',
-          region:1,
-          title:'高原器用补给',
-          desc:'把铁器与茶叶带到第一阶梯，帮助高寒牧区补足生产与生活所需。',
-          needs:{ iron:2, tea:2 },
-          rewardMoney:48,
-          rewardIntegration:24,
-          completed:false
-        },
-        {
-          id:'o2',
-          region:2,
-          title:'草原山地互市',
-          desc:'为第二阶梯运来粮食、瓷器与铁器，让牧区与山地市集更稳定。',
-          needs:{ grain:2, porcelain:1, iron:1 },
-          rewardMoney:54,
-          rewardIntegration:25,
-          completed:false
-        },
-        {
-          id:'o3',
-          region:3,
-          title:'平原军需与民生',
-          desc:'把战马、皮毛与藏药带到第三阶梯，满足交通、防务与医疗需要。',
-          needs:{ horse:1, fur:2, saffron:1 },
-          rewardMoney:60,
-          rewardIntegration:28,
-          completed:false
-        },
-        {
-          id:'o4',
-          region:3,
-          title:'高原药材入城',
-          desc:'将冬虫夏草送到第三阶梯，使平原民间真正理解高原药材的价值。',
-          needs:{ cordyceps:2 },
-          rewardMoney:42,
-          rewardIntegration:20,
-          completed:false
-        },
-        {
-          id:'o5',
-          region:1,
-          title:'绸缎越雪线',
-          desc:'把丝绸与茶叶带上高原，让高寒地区看到来自农耕区的精细织造。',
-          needs:{ silk:2, tea:1 },
-          rewardMoney:46,
-          rewardIntegration:22,
-          completed:false
-        },
-        {
-          id:'o6',
-          region:2,
-          title:'平原器物入山地',
-          desc:'将丝绸与粮食带到第二阶梯，推进草原与山地交换。',
-          needs:{ silk:1, grain:2 },
-          rewardMoney:40,
-          rewardIntegration:20,
-          completed:false
-        }
-      ];
-    }
-
-    function avatarSvg(type, size = 56){
-      const map = {
-        player1:{robe:'#7a2f29',hat:'#4f3025',bg:'#efe5d0'},
-        player2:{robe:'#5f6b3d',hat:'#33412c',bg:'#ebefdd'},
-        player3:{robe:'#8a5b2e',hat:'#5b3a22',bg:'#f1e8d7'},
-        elder:{robe:'#6b4c91',hat:'#3d2b5b',bg:'#eee7f7'},
-        rider:{robe:'#517146',hat:'#2e472a',bg:'#e8f2e4'},
-        artisan:{robe:'#8c5035',hat:'#5b3421',bg:'#f5e6db'},
-        narrator:{robe:'#5a687c',hat:'#344050',bg:'#e7edf3'}
-      };
-      const c = map[type] || map.narrator;
-      return `
-        <svg viewBox="0 0 64 64" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
-          <rect width="64" height="64" rx="16" fill="${c.bg}"/>
-          <circle cx="32" cy="25" r="11" fill="#f0cfad"/>
-          <path d="M18 60c2-10 8-16 14-16s12 6 14 16" fill="${c.robe}"/>
-          <path d="M20 22c1-9 8-14 12-14 6 0 12 5 12 14-3-4-7-6-12-6s-9 2-12 6z" fill="${c.hat}"/>
-          <circle cx="28" cy="25" r="1.4" fill="#3b2c24"/>
-          <circle cx="36" cy="25" r="1.4" fill="#3b2c24"/>
-          <path d="M28 30c2 2 6 2 8 0" stroke="#7c4a37" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <svg class="mountains" viewBox="0 0 1200 260" preserveAspectRatio="none">
+            <path d="M0 220 C120 120 220 150 330 70 C430 0 520 130 650 70 C760 20 850 160 970 90 C1080 20 1130 120 1200 80 L1200 260 L0 260 Z" fill="rgba(67,92,80,.20)"></path>
+            <path d="M0 240 C140 175 230 185 360 115 C470 55 570 170 710 110 C830 55 910 185 1040 130 C1120 95 1165 145 1200 125 L1200 260 L0 260 Z" fill="rgba(69,55,39,.15)"></path>
         </svg>
-      `;
-    }
+    </div>
+</section>
 
-    function playerAvatarType(){
-      if(state.homeRegion === 1) return 'player1';
-      if(state.homeRegion === 2) return 'player2';
-      return 'player3';
-    }
+<section id="identityScreen" class="screen">
+    <div class="hero">
+        <div class="seal">选择你的出生地与民族身份</div>
+        <h1 class="title">你从哪里出发？</h1>
+        <p class="subtitle">
+            不同身份拥有不同初始物资、需求和贸易优势。请选择一个角色，系统会根据你的出生地分配初始资金与背包。
+        </p>
+        <div class="identity-grid" id="identityGrid"></div>
+    </div>
+</section>
 
-    function regionNpc(regionId){
-      if(regionId === 1) return { name:'高原长者 · 扎西', avatar:'elder' };
-      if(regionId === 2) return { name:'草原马队领队 · 苏赫', avatar:'rider' };
-      return { name:'平原匠师 · 清和', avatar:'artisan' };
-    }
-
-    function dialogueHtml(entries){
-      return `
-        <div class="dialogue-list">
-          ${entries.map(item => `
-            <div class="dialogue ${item.side === 'right' ? 'right' : ''}">
-              <div class="portrait">${avatarSvg(item.avatar)}</div>
-              <div class="speech">
-                <div class="speaker">${item.name}</div>
-                <div>${item.text}</div>
-              </div>
-            </div>
-          `).join('')}
+<section id="gameScreen" class="screen">
+    <div class="topbar">
+        <div class="stat-card">
+            <div class="stat-title">当前位置</div>
+            <div class="stat-value" id="currentLocation">—</div>
+            <div class="stat-title" id="currentPeople">—</div>
         </div>
-      `;
-    }
 
-    function sceneSvg(regionId){
-      if(regionId === 1){
-        return `
-          <svg viewBox="0 0 480 240" class="scene-svg" aria-label="青藏高原场景">
-            <rect x="0" y="0" width="480" height="240" rx="24" fill="#e9eef1"/>
-            <circle cx="390" cy="48" r="28" fill="#e7c979" opacity=".95"/>
-            <path d="M0 158 L72 86 L130 134 L188 68 L250 136 L320 74 L394 142 L480 102 L480 240 L0 240 Z" fill="#b5c5cf"/>
-            <path d="M0 182 L86 118 L146 154 L214 98 L290 162 L360 108 L430 170 L480 150 L480 240 L0 240 Z" fill="#d8e3ea"/>
-            <path d="M0 194 Q80 176 158 190 T318 186 T480 196 L480 240 L0 240 Z" fill="#ceb08b"/>
-            <path d="M118 178 L156 149 L194 178 Z" fill="#7b4631"/>
-            <rect x="131" y="178" width="50" height="18" fill="#936447"/>
-            <path d="M248 192 h52 a8 8 0 0 1 8 8 v4 h-68 v-4 a8 8 0 0 1 8-8z" fill="#3f342d"/>
-            <circle cx="252" cy="198" r="10" fill="#3f342d"/>
-            <circle cx="299" cy="200" r="7" fill="#3f342d"/>
-            <path d="M88 197 h44 a7 7 0 0 1 7 7 v2 h-58 v-2 a7 7 0 0 1 7-7z" fill="#4a3b33"/>
-            <circle cx="93" cy="202" r="8" fill="#4a3b33"/>
-            <circle cx="130" cy="204" r="6" fill="#4a3b33"/>
-            <path d="M356 156 q8 -16 16 0 q8 16 16 0 q8 -16 16 0" stroke="#7e2f25" stroke-width="3" fill="none"/>
-            <path d="M353 157 v52" stroke="#6a5944" stroke-width="3"/>
-          </svg>
-        `;
-      }
-      if(regionId === 2){
-        return `
-          <svg viewBox="0 0 480 240" class="scene-svg" aria-label="草原与山地场景">
-            <rect x="0" y="0" width="480" height="240" rx="24" fill="#ebf0e2"/>
-            <circle cx="382" cy="54" r="29" fill="#ebc76c" opacity=".96"/>
-            <path d="M0 134 Q84 82 160 118 T324 114 T480 104 L480 240 L0 240 Z" fill="#a6ba92"/>
-            <path d="M0 168 Q74 136 146 156 T280 150 T480 138 L480 240 L0 240 Z" fill="#89a56f"/>
-            <path d="M0 196 Q110 182 226 194 T480 188 L480 240 L0 240 Z" fill="#b98f60"/>
-            <ellipse cx="120" cy="162" rx="34" ry="20" fill="#f2f1ea" stroke="#b8b2a3" stroke-width="2"/>
-            <rect x="106" y="162" width="28" height="14" fill="#e8e2d0"/>
-            <path d="M260 180 q18 -18 36 0 h18 q9 0 9 9 v4 h-76 v-4 q0 -9 9 -9z" fill="#5c4334"/>
-            <circle cx="270" cy="190" r="8" fill="#5c4334"/>
-            <circle cx="310" cy="190" r="7" fill="#5c4334"/>
-            <path d="M376 132 l14 12 l-14 12 l-14 -12z" fill="#d7dfe7"/>
-            <circle cx="376" cy="144" r="5" fill="#c49a47"/>
-            <path d="M376 120 v36" stroke="#7d6a52" stroke-width="3"/>
-          </svg>
-        `;
-      }
-      return `
-        <svg viewBox="0 0 480 240" class="scene-svg" aria-label="农耕文明核心区场景">
-          <rect x="0" y="0" width="480" height="240" rx="24" fill="#f1ebdf"/>
-          <circle cx="402" cy="50" r="28" fill="#eccd7a" opacity=".96"/>
-          <path d="M0 152 Q88 126 166 136 T324 132 T480 118 L480 240 L0 240 Z" fill="#cfb48e"/>
-          <path d="M0 178 Q82 160 164 168 T326 164 T480 150 L480 240 L0 240 Z" fill="#c1a56f"/>
-          <path d="M0 240 V188 Q84 174 164 184 T292 188 T480 172 V240 Z" fill="#9fc1c9"/>
-          <rect x="52" y="136" width="98" height="32" rx="6" fill="#b67f49"/>
-          <rect x="70" y="118" width="64" height="18" fill="#8d5f38"/>
-          <rect x="208" y="122" width="88" height="56" rx="4" fill="#9d7a58"/>
-          <rect x="220" y="136" width="18" height="42" fill="#704c33"/>
-          <rect x="306" y="146" width="40" height="28" fill="#b89060"/>
-          <path d="M346 174 h24 q8 0 8 8 v6 h-40 v-6 q0 -8 8 -8z" fill="#6b4e35"/>
-          <path d="M372 158 q10 -18 20 0 q10 18 20 0" stroke="#7a7a7a" stroke-width="4" fill="none"/>
-          <rect x="386" y="160" width="6" height="22" fill="#7a7a7a"/>
-          <rect x="406" y="160" width="6" height="22" fill="#7a7a7a"/>
-        </svg>
-      `;
-    }
-
-    function currentChapterDef(){
-      return CHAPTERS[state.chapter - 1];
-    }
-
-    function chapterObjectives(chapterId){
-      if(chapterId === 1){
-        return [
-          {
-            label:'到访任一异地阶梯',
-            done: state.visitedRegions.size >= 2,
-            progress: `${Math.min(state.visitedRegions.size - 1, 1) < 0 ? 0 : Math.min(state.visitedRegions.size - 1, 1)}/1`
-          },
-          {
-            label:'在异地进行 1 次文化交流',
-            done: state.stats.foreignCulture >= 1,
-            progress: `${Math.min(state.stats.foreignCulture, 1)}/1`
-          },
-          {
-            label:'完成 1 次有效跨阶梯交易或 1 份订单',
-            done: state.stats.effectiveTrades >= 1 || state.stats.ordersCompleted >= 1,
-            progress: `${Math.min(state.stats.effectiveTrades + state.stats.ordersCompleted, 1)}/1`
-          }
-        ];
-      }
-      if(chapterId === 2){
-        return [
-          {
-            label:'完成 1 份互通订单',
-            done: state.stats.ordersCompleted >= 1,
-            progress: `${Math.min(state.stats.ordersCompleted, 1)}/2`
-          },
-          {
-            label:'走遍三个阶梯',
-            done: state.visitedRegions.size >= 3,
-            progress: `${Math.min(state.visitedRegions.size, 3)}/3`
-          },
-          {
-            label:'完成 2 次有效跨阶梯交易',
-            done: state.stats.effectiveTrades >= 2,
-            progress: `${Math.min(state.stats.effectiveTrades, 2)}/3`
-          }
-        ];
-      }
-      if(chapterId === 3){
-        return [
-          {
-            label:'完成 2 份互通订单',
-            done: state.stats.ordersCompleted >= 2,
-            progress: `${Math.min(state.stats.ordersCompleted, 2)}/3`
-          },
-          {
-            label:'在两个不同阶梯完成交流',
-            done: ([1,2,3].filter(id => state.cultureCount[id] > 0).length >= 2),
-            progress: `${[1,2,3].filter(id => state.cultureCount[id] > 0).length}/2`
-          },
-          {
-            label:'完成 3 次有效跨阶梯交易',
-            done: state.stats.effectiveTrades >= 3,
-            progress: `${Math.min(state.stats.effectiveTrades, 3)}/5`
-          }
-        ];
-      }
-      return [
-        {
-          label:'让中华民族交融度达到 90',
-          done: state.integration >= 90,
-          progress: `${state.integration}/90`
-        }
-      ];
-    }
-
-    function chapterComplete(chapterId){
-      return chapterObjectives(chapterId).every(item => item.done);
-    }
-
-    function grantChapterReward(reward){
-      if(reward.money) state.money += reward.money;
-      if(reward.integration) changeIntegration(reward.integration);
-      if(reward.grain) addItem('grain', reward.grain, state.currentRegion);
-      // 课堂版取消体力限制，章节奖励不再恢复体力。
-    }
-
-    function openInfoModal({emoji, title, body, buttonText = '继续'}){
-      eventModal.classList.remove('hidden');
-      eventModal.innerHTML = `
-        <div class="modal-card">
-          <div class="modal-head">
-            <div class="modal-emoji">${emoji}</div>
-            <div>
-              <h2>${title}</h2>
-              <p>${body}</p>
-            </div>
-          </div>
-          <div class="action-row">
-            <button class="btn" data-close-modal="1">${buttonText}</button>
-          </div>
+        <div class="stat-card">
+            <div class="stat-title">中华民族交融度</div>
+            <div class="stat-value"><span id="fusionText">0</span></div>
+            <div class="fusion-bar"><div class="fusion-fill" id="fusionFill"></div></div>
+            <div class="stat-title">每完成一次买入或卖出，交融度 +1。</div>
         </div>
-      `;
-    }
 
-    function closeNarrativeModal(){
-      eventModal.classList.add('hidden');
-      eventModal.innerHTML = '';
-    }
-
-    function checkChapterProgress(){
-      if(state.chapter >= 4) return false;
-      if(!chapterComplete(state.chapter)) return false;
-
-      const finished = currentChapterDef();
-      grantChapterReward(finished.reward);
-      addLog(`【章节完成】${finished.title}达成。你获得奖励：铜币 +${finished.reward.money}，交融度 +${finished.reward.integration}${finished.reward.grain ? `，粮食 +${finished.reward.grain}` : ''}。`, 'bonus');
-
-      state.chapter += 1;
-      const nextChapter = currentChapterDef();
-
-      openInfoModal({
-        emoji: finished.emoji,
-        title: `${finished.title} 完成`,
-        body: `${finished.desc}<br/><br/>奖励已发放：铜币 +${finished.reward.money}、交融度 +${finished.reward.integration}${finished.reward.grain ? `、粮食 +${finished.reward.grain}` : ''}。<br/><br/>新的主线开启：<strong>${nextChapter.title}</strong>。${nextChapter.desc}`,
-        buttonText: '进入下一章'
-      });
-      return true;
-    }
-
-    function maybeWin(){
-      if(state.endingShown || state.failureShown) return true;
-      if(state.chapter === 4 && state.integration >= 90){
-        state.endingShown = true;
-        openEnding();
-        return true;
-      }
-      return false;
-    }
-
-    function checkFail(){
-      if(state.endingShown || state.failureShown) return true;
-
-      if(state.daysRemaining <= 0 && state.integration < 90){
-        state.failureShown = true;
-        openFailure('timeout');
-        return true;
-      }
-
-      if(state.money <= 0 && totalGoodsCount() === 0){
-        state.failureShown = true;
-        openFailure('bankrupt');
-        return true;
-      }
-
-      return false;
-    }
-
-    function openFailure(type){
-      clearSavedGame();
-      let title = '';
-      let text = '';
-      let emoji = '⌛';
-
-      if(type === 'timeout'){
-        title = '失败结局：岁月流逝，商路未成';
-        text = '商路倒计时已经归零。你虽然看见了阶梯之间的差异与需求，却没能在时限内把稳定的互通之路彻底走通。历史告诉我们，共同体的形成并不会自动发生，它需要持续不断的往来、合作与经营。';
-      }else if(type === 'bankrupt'){
-        title = '失败结局：盘缠散尽';
-        emoji = '💸';
-        text = '你耗尽了资金，背包里也再没有可以周转的货物。没有补给、没有筹码，商队难以继续前行。单靠一时冲动而缺乏规划，往往无法撑起真正长久的交流。';
-      }else{
-        title = '失败结局：商队困顿';
-        emoji = '🥀';
-        text = '商队体力已经耗尽，盘缠不足，货物也难以支撑新的补给。再远大的愿望，也需要人、牲畜、粮草与节奏来支撑。交流之路，不仅靠热情，也靠经营。';
-      }
-
-      endingModal.classList.remove('hidden');
-      endingModal.innerHTML = `
-        <div class="modal-card">
-          <div class="modal-head">
-            <div class="modal-emoji">${emoji}</div>
-            <div>
-              <h2>${title}</h2>
-              <p>${text}</p>
-            </div>
-          </div>
-          <div class="summary-grid">
-            <div class="summary-box">交融度<span class="num">${state.integration}</span></div>
-            <div class="summary-box">完成订单<span class="num">${state.stats.ordersCompleted}</span></div>
-            <div class="summary-box">有效贸易<span class="num">${state.stats.effectiveTrades}</span></div>
-            <div class="summary-box">剩余时限<span class="num">${state.daysRemaining}</span></div>
-          </div>
-          <button class="btn" data-restart="1">重整商队，再试一次</button>
+        <div class="stat-card">
+            <div class="stat-title">资金</div>
+            <div class="stat-value"><span id="moneyText">0</span> 钱</div>
+            <div class="stat-title">行程：第 <span id="turnText">1</span> 回合</div>
+            <div class="stat-title" id="goalText">目标进度：—</div>
         </div>
-      `;
-    }
+    </div>
 
-    function openEnding(){
-      clearSavedGame();
-      endingModal.classList.remove('hidden');
-      endingModal.innerHTML = `
-        <div class="modal-card">
-          <div class="modal-head">
-            <div class="modal-emoji">🏮</div>
-            <div>
-              <h2>通关：共同体之路</h2>
-              <p>你已完成四章主线，让交融度达到 90。</p>
+    <div class="main-layout">
+        <div>
+            <div class="panel">
+                <h2>山河贸易图</h2>
+                <div class="map">
+                    <div class="step-zone zone-1" id="zone1">
+                        <div class="zone-title">第一阶梯</div>
+                        <div class="zone-sub">青藏高原<br>藏族，高寒牧区</div>
+                    </div>
+                    <div class="step-zone zone-2" id="zone2">
+                        <div class="zone-title">第二阶梯</div>
+                        <div class="zone-sub">内蒙古草原、云贵高原、黄土高原<br>蒙古族、回族、苗族</div>
+                    </div>
+                    <div class="step-zone zone-3" id="zone3">
+                        <div class="zone-title">第三阶梯</div>
+                        <div class="zone-sub">华北平原、长江中下游平原、四川盆地<br>汉族，农耕核心区</div>
+                    </div>
+                    <div class="caravan" id="caravan">🐫</div>
+                </div>
+
+                <div class="needs-box" id="needsBox"></div>
+                <div class="goal-box" id="goalBox"></div>
+
+                <div class="action-grid">
+                    <div class="action-card" onclick="state.lastTradeMessage=''; openMarket()">
+                        <div class="icon">🏺</div>
+                        <h3>市场交易</h3>
+                        <p>买卖当前阶梯的本地特产与外来物资。每个阶梯市场交易会随机出现 2—3 次历史事件。</p>
+                    </div>
+                    <div class="action-card" onclick="openTravel()">
+                        <div class="icon">🐎</div>
+                        <h3>组建商队探索</h3>
+                        <p>前往其他阶梯，消耗资金或粮食，寻找新的需求与贸易机会。</p>
+                    </div>
+                    <div class="action-card" onclick="openCulture()">
+                        <div class="icon">📜</div>
+                        <h3>文化交流</h3>
+                        <p>每个阶梯必须至少完成一次文化交流，重复交流只复习知识。</p>
+                    </div>
+                </div>
             </div>
-          </div>
+        </div>
 
-          <div class="summary-grid">
-            <div class="summary-box">交融度<span class="num">${state.integration}</span></div>
-            <div class="summary-box">市集交易<span class="num">${state.stats.trades}</span></div>
-            <div class="summary-box">完成订单<span class="num">${state.stats.ordersCompleted}</span></div>
-            <div class="summary-box">剩余时限<span class="num">${state.daysRemaining}</span></div>
-          </div>
+        <div>
+            <div class="panel">
+                <h2>背包物资</h2>
+                <div class="inventory-list" id="inventoryList"></div>
+            </div>
 
-          <div class="ending-text">
+            <div class="panel" style="margin-top:16px;">
+                <h2>旅程记录</h2>
+                <div class="log-list" id="logList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        通关目标：到达三个阶梯；每个阶梯完成一次文化交流；资金达到 1000 钱。
+    </div>
+</section>
+
+<section id="endingScreen" class="screen">
+    <div class="hero ending">
+        <h1>共同体之路已成</h1>
+        <p>
             通过无数次跨越阶梯的驼铃与马帮，农耕文明与游牧、高原文明的血液交织在一起。
-            物质的互通有无，最终促成了文化的深度认同。
-            你见证了中华大地上的各民族在这个相对封闭又内部多元的地理空间中，
+            物质的互通有无，最终促成了文化的深度认同。你见证了中华大地上的各民族在这个相对封闭又内部多元的地理空间中，
             从自发的物产交换，走向了自觉的血脉交融，共同铸就了中华民族共同体！
-          </div>
-
-          <div class="ending-text">
-            在这一路上，你走访了 <strong>${state.visitedRegions.size}</strong> 个阶梯区域，
-            完成了 <strong>${state.stats.ordersCompleted}</strong> 份互通订单，
-            实现了 <strong>${state.stats.effectiveTrades}</strong> 次有效跨阶梯贸易。
-            真正让共同体意识变得清晰的，从来不是一次短促买卖，而是漫长、稳定、反复发生的交流与互赖。
-          </div>
-
-          <button class="btn" data-restart="1">再走一程</button>
+        </p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px;">
+            <button class="btn secondary" onclick="showSettlement()">查看我的成果结算</button>
+            <button class="btn ghost" onclick="restartGame()">重新开始</button>
         </div>
-      `;
-    }
+    </div>
+</section>
 
-    function getMissionText(){
-      const home = state.homeRegion;
-      const current = state.currentRegion;
-      const region = REGIONS[current];
+<section id="settlementScreen" class="screen">
+    <div class="hero ending">
+        <h1>旅程成果结算</h1>
+        <p style="text-align:center;">
+            这不是一次简单的买卖记录，而是一条从物产交换走向文化理解的学习路线。
+        </p>
 
-      let base = '';
-      if(home === 1){
-        base = '寒冬将至，我的族人需要中原的铁器来打造工具，也需要茶叶来熬制酥油茶，还盼着丝绸进入高原。高原的药材与牲畜若想真正改变家乡命运，就必须翻山越岭，换回不可替代的外来之物。';
-      }else if(home === 2){
-        base = '草原与山地的商队离不开稳定的粮食，也盼望丝绸、瓷器与铁器。我的路不再是一次短促买卖，而是要反复穿行不同阶梯，才能让多民族市场真正繁盛起来。';
-      }else{
-        base = '平原富庶，却仍缺战马、皮毛与藏药。我若想让城镇与乡里看到外部世界的价值，就必须把器物和粮食送出去，再把草原与高原的稀缺之物带回来。';
-      }
-
-      const sellable = Object.keys(GOODS).filter(key => {
-        const lots = state.inventory[key] || [];
-        return lots.some(lot => lot.acquiredAt !== current && lot.origin !== current) && goodMatchesNeed(current, key);
-      });
-
-      let opportunity = '';
-      if(sellable.length){
-        opportunity = `此刻在 <strong>${region.stair}</strong> 的集市里，<strong>${sellable.map(k => GOODS[k].name).join('、')}</strong> 正好契合当地需求。若能顺带交付订单，交融度会增长得更明显。`;
-      }else if(current === state.homeRegion){
-        opportunity = `我此刻仍在家乡。家乡紧缺的是：<strong>${getNeedLabel(home)}</strong>。真正艰难的，不是知道缺什么，而是筹够货、粮食与路费，再把路一次次走通。`;
-      }else{
-        opportunity = `当前驻地最需要的是：<strong>${getNeedLabel(current)}</strong>。把真正所缺的东西跨阶梯运来，才是提高交融度最稳妥的办法。`;
-      }
-
-      return `${base}<br/><br/>${opportunity}`;
-    }
-
-    function renderStart(){
-      startScreen.innerHTML = `
-        <div class="start-wrap">
-          <section class="hero card">
-            <div class="hero-main">
-              <div class="seal">启程</div>
-              <div class="hero-copy">
-                <h1 class="ink-title">阶梯之间：驼铃与马帮</h1>
-                <p>
-                  你将以第一人称身份行走于中国地理环境三级阶梯之间，
-                  在高原、草原山地与农耕核心区之间筹货、赶路、互市、交流。
-                  差异不是隔阂的终点，而是交换与认同的起点。
-                </p>
-              </div>
+        <div class="result-grid">
+            <div class="result-card">
+                <small>最终资金</small>
+                <strong id="finalMoney">0</strong>
+                <div>钱</div>
             </div>
-            <aside class="hero-note subcard">
-              <h3>这一版的新挑战</h3>
-              <ul>
-                <li>明确倒计时：每一步都会消耗时限。</li>
-                <li>章节主线：不只是赚钱，还要完成阶段目标。</li>
-                <li>角色对话：用商旅与当地人物的交流推动剧情。</li>
-                <li>失败结局：超时、破产、商队困顿都会结束旅程。</li>
-                <li>自动存档：意外刷新后可继续上一次旅程。</li>
-              </ul>
-              ${hasSavedGame() ? '<button class="btn" data-continue="1">继续上次旅程</button>' : '<button class="btn-soft" disabled>暂无可继续的存档</button>'}
-            </aside>
-          </section>
-
-          <section class="role-grid">
-            ${ROLES.map(role => {
-              const region = REGIONS[role.region];
-              return `
-                <article class="role-card card">
-                  <div class="role-art">${sceneSvg(role.region)}</div>
-                  <div class="role-content">
-                    <span class="role-tag">${region.stair} · ${region.title}</span>
-                    <h3>${role.title}</h3>
-                    <p>${role.motto}</p>
-                    <div class="tag-row">
-                      <span class="tag route-tag">本地特产：${getLocalLabel(role.region)}</span>
-                    </div>
-                    <div class="tag-row">
-                      <span class="tag need-tag">核心需求：${getNeedLabel(role.region)}</span>
-                    </div>
-                    <button class="btn" data-role="${role.id}">以此身份启程</button>
-                  </div>
-                </article>
-              `;
-            }).join('')}
-          </section>
-        </div>
-      `;
-    }
-
-    function selectRole(roleId){
-      clearSavedGame();
-      resetState();
-      const role = getRoleById(roleId);
-      state.role = role;
-      state.homeRegion = role.region;
-      state.currentRegion = role.region;
-      state.money = role.money;
-      state.stamina = role.stamina;
-      state.orders = createOrders();
-      state.visitedRegions.add(role.region);
-
-      Object.entries(role.startGoods).forEach(([good, qty]) => addItem(good, qty, role.region));
-
-      addLog(`【启程】${role.intro}`, 'important');
-      addLog(`我作为“${role.shortTitle}”踏上旅途。如今的商路有倒计时、有章节、有失败风险，只有真正走通互通之路，才能看见共同体意识如何生成。`, 'bonus');
-
-      startScreen.classList.add('hidden');
-      gameScreen.classList.remove('hidden');
-      renderGame();
-
-      openInfoModal({
-        emoji: CHAPTERS[0].emoji,
-        title: CHAPTERS[0].title,
-        body: `${CHAPTERS[0].desc}<br/><br/>倒计时已经开始：你只有 <strong>${state.maxDays}</strong> 日来完成这段旅程。先走出家乡，再完成一次真正有意义的交流与贸易。`,
-        buttonText: '开始行商'
-      });
-    }
-
-    function renderMetrics(){
-      const region = REGIONS[state.currentRegion];
-      metricGrid.innerHTML = `
-        <div class="metric">
-          <div class="label">当前时序</div>
-          <div class="value">${seasonLabel()}</div>
-        </div>
-        <div class="metric">
-          <div class="label">当前阶梯</div>
-          <div class="value">${region.stair}</div>
-        </div>
-        <div class="metric">
-          <div class="label">资金</div>
-          <div class="value">${state.money} 铜币</div>
-        </div>
-        <div class="metric">
-          <div class="label">互通订单</div>
-          <div class="value">${state.stats.ordersCompleted} / ${state.orders.length}</div>
-        </div>
-      `;
-
-      const risk = getRiskState();
-      statusStrip.innerHTML = `
-        <div class="strip">
-          <strong>本地特产：</strong>${getLocalLabel(state.currentRegion)}<br/>
-          <strong>主要民族：</strong>${region.peoples}<br/>
-          <strong>季节提示：</strong>${sceneSeasonHint()}
-        </div>
-        <div class="strip">
-          <strong>当前需求：</strong>${getNeedLabel(state.currentRegion)}<br/>
-          <strong>你的身份：</strong>${state.role.shortTitle}<br/>
-          <strong>持有货物：</strong>${totalGoodsCount()} 件
-        </div>
-        <div class="strip">
-          <strong>行商预警：</strong><span class="${risk.level === 'high' ? 'risk-high' : risk.level === 'mid' ? 'risk-mid' : ''}">${risk.label}</span><br/>
-          <strong>当前补给：</strong>粮食 ${totalOf('grain')} 份，货物 ${totalGoodsCount()} 件<br/>
-          <strong>建议：</strong>${risk.text}
-        </div>
-      `;
-
-      integrationBar.style.width = `${Math.min(100, Math.round((state.integration / 90) * 100))}%`;
-      integrationLabel.textContent = `${state.integration} / 90`;
-
-      const timePct = Math.max(0, (state.daysRemaining / state.maxDays) * 100);
-      timeBar.style.width = `${timePct}%`;
-      timeLabel.textContent = `${state.daysRemaining} / ${state.maxDays} 日`;
-    }
-
-    function renderScene(){
-      const region = REGIONS[state.currentRegion];
-      subtitle.textContent = `${state.role.title} · ${region.stair} · ${region.name}`;
-      sceneArt.innerHTML = sceneSvg(state.currentRegion);
-
-      let sceneText = '';
-      if(state.currentRegion === 1){
-        sceneText = '我抬头看见雪线与高原长风，牦牛在坡地缓缓行走。山高路险，让每一件翻越阶梯而来的器物都格外珍贵。';
-      }else if(state.currentRegion === 2){
-        sceneText = '我穿过草浪与山路，马队、回商与山地银匠在集市相逢。这里连接南北东西，是多民族商贸往来的重要中介。';
-      }else{
-        sceneText = '我行走在平原渡口、窑场与铁作坊之间。粮仓、茶肆与市集说明这里物产丰盈，但也正因为分工发达，更需要从外部引入战马、皮毛与药材。';
-      }
-
-      sceneBody.innerHTML = `
-        <div class="scene-badges">
-          <span class="tag route-tag">${region.stair}</span>
-          <span class="tag">${region.name}</span>
-          <span class="tag local-tag">主要民族：${region.peoples}</span>
-          <span class="tag warn-tag">${seasonLabel()}</span>
-          <span class="tag">${currentChapterDef().title}</span>
-        </div>
-        <h2>${region.title}</h2>
-        <p>${sceneText}</p>
-        <p>我此刻行走在 <strong>${region.name}</strong>。这里出产 <strong>${getLocalLabel(state.currentRegion)}</strong>，而真正推动我前往远方的，是对 <strong>${getNeedLabel(state.currentRegion)}</strong> 的长期需要。</p>
-      `;
-    }
-
-    function renderChapter(){
-      const chapter = currentChapterDef();
-      const objectives = chapterObjectives(state.chapter);
-
-      chapterBox.innerHTML = `
-        <div class="chapter-box">
-          <div class="chapter-head">
-            <h4>${chapter.emoji} ${chapter.title}</h4>
-            <span class="tag warn-tag">主线进行中</span>
-          </div>
-          <div class="muted small">${chapter.desc}</div>
-          <div class="objective-list">
-            ${objectives.map(item => `
-              <div class="objective-item ${item.done ? 'done' : ''}">
-                <span>${item.done ? '✓ ' : '○ '}${item.label}</span>
-                <span class="tag ${item.done ? 'done-tag' : 'warn-tag'}">${item.progress}</span>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderMission(){
-      missionBox.innerHTML = getMissionText();
-
-      const activeOrders = state.orders.filter(o => !o.completed);
-      if(!activeOrders.length){
-        ordersBox.innerHTML = `<div class="empty">所有互通订单都已完成。此后仍可继续靠关键贸易与文化交流推进主线。</div>`;
-        return;
-      }
-
-      ordersBox.innerHTML = activeOrders.map(order => {
-        const canSubmitHere = order.region === state.currentRegion;
-        const hasGoods = Object.entries(order.needs).every(([good, qty]) => totalOf(good) >= qty);
-        const ready = canSubmitHere && hasGoods;
-        const progressText = Object.entries(order.needs).map(([good, qty]) => {
-          const owned = totalOf(good);
-          return `${GOODS[good].name} ${owned}/${qty}`;
-        }).join(' · ');
-        const statusText = !canSubmitHere ? '未到指定阶梯' : !hasGoods ? '货物未备齐' : '可以交付';
-        return `
-          <div class="order-card">
-            <div class="order-top">
-              <h4>${order.title}</h4>
-              <span class="tag need-tag">${REGIONS[order.region].stair}</span>
+            <div class="result-card">
+                <small>交融度</small>
+                <strong id="finalFusion">0</strong>
             </div>
-            <p>${order.desc}</p>
-            <p><strong>所需：</strong>${Object.entries(order.needs).map(([good, qty]) => `${GOODS[good].name}×${qty}`).join('、')}</p>
-            <p><strong>当前持有：</strong>${progressText}</p>
-            <p><strong>奖励：</strong>${order.rewardMoney} 铜币，交融度 +${order.rewardIntegration}</p>
-            <p><strong>交付状态：</strong>${statusText}</p>
-            <div class="action-row">
-              <button class="btn-soft" data-submit-order="${order.id}" ${ready ? '' : 'disabled'}>在此地交付</button>
+            <div class="result-card">
+                <small>到达阶梯</small>
+                <strong id="finalVisited">0/3</strong>
             </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderPack(){
-      const owned = Object.keys(GOODS).filter(key => totalOf(key) > 0)
-        .sort((a,b) => totalOf(b) - totalOf(a));
-
-      if(!owned.length){
-        packBox.innerHTML = `<div class="empty">背包空空。先去市场购入货物，或在交流与事件中获得赠礼。</div>`;
-        return;
-      }
-
-      packBox.innerHTML = owned.map(key => `
-        <div class="pack-item">
-          <div class="icon">${GOODS[key].icon}</div>
-          <div>
-            <div class="name">${GOODS[key].name}</div>
-            <div class="origin">${lotSummary(key)}</div>
-          </div>
-          <div class="qty">×${totalOf(key)}</div>
+            <div class="result-card">
+                <small>文化交流</small>
+                <strong id="finalCulture">0/3</strong>
+            </div>
         </div>
-      `).join('');
-    }
 
-    function renderLogs(){
-      if(!state.logs.length){
-        logBox.innerHTML = `<div class="empty">你的旅途还没有留下记录。</div>`;
-        return;
-      }
-      logBox.innerHTML = state.logs.map(item => `<div class="log-item ${item.kind || ''}">${item.text}</div>`).join('');
-    }
-
-    function renderTab(){
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === ui.activeTab));
-
-      if(ui.activeTab === 'market') renderMarket();
-      else if(ui.activeTab === 'travel') renderTravel();
-      else if(ui.activeTab === 'culture') renderCulture();
-      else renderCamp();
-    }
-
-    function renderMarket(){
-      const current = state.currentRegion;
-      actionPanel.innerHTML = `
-        <div class="travel-intro subcard">
-          提示：<strong>本地特产买入最便宜</strong>，<strong>当地紧缺物资卖出最划算</strong>。但现在单次买卖的交融度收益有限，真正的主线推进主要来自订单、章节与持续性的互通。
+        <div class="result-section">
+            <h2>总体评价</h2>
+            <div class="result-comment" id="finalComment"></div>
+            <div class="result-badge-row" id="finalBadges"></div>
         </div>
-        <div class="goods-grid">
-          ${Object.keys(GOODS).map(key => {
-            const local = REGIONS[current].localGoods.includes(key);
-            const needed = goodMatchesNeed(current, key);
-            const needLabel = current === 3 && (key === 'saffron' || key === 'cordyceps') ? '可作藏药' : '当前紧缺';
-            return `
-              <article class="goods-card ${local ? 'local' : ''} ${needed ? 'needed' : ''}">
-                <div class="goods-top">
-                  <div class="goods-icon">${GOODS[key].icon}</div>
-                  <div>
-                    <div class="goods-title">${GOODS[key].name}</div>
-                    <div class="goods-desc">${GOODS[key].desc}</div>
-                  </div>
-                </div>
-                <div class="tag-row">
-                  ${local ? `<span class="tag local-tag">本地充盈</span>` : `<span class="tag">外来货</span>`}
-                  ${needed ? `<span class="tag need-tag">${needLabel}</span>` : ''}
-                  <span class="tag route-tag">产地：${shortRegion(GOODS[key].origin)}</span>
-                </div>
-                <div class="price-row">
-                  <span>买入：<strong>${getBuyPrice(current, key)}</strong></span>
-                  <span>卖出：<strong>${getSellPrice(current, key)}</strong></span>
-                </div>
-                <div class="owned-row">
-                  <span>持有：${totalOf(key)} 件</span>
-                  <span>本季行情：${pseudoVariance(current, key) >= 0 ? '偏涨' : '偏稳/偏低'}</span>
-                </div>
-                <div class="goods-actions">
-                  <button class="btn-soft" data-buy="${key}">买入 1</button>
-                  <button class="btn-soft" data-sell="${key}" ${totalOf(key) < 1 ? 'disabled' : ''}>卖出 1</button>
-                </div>
-              </article>
-            `;
-          }).join('')}
+
+        <div class="result-section">
+            <h2>你经历过的历史事件</h2>
+            <div class="result-list" id="finalHistoryEvents"></div>
         </div>
-      `;
-    }
 
-    function renderTravel(){
-      actionPanel.innerHTML = `
-        <div class="travel-intro subcard">${getTravelRuleText()}</div>
-        <div class="travel-grid">
-          ${Object.values(REGIONS).map(region => {
-            const cost = getTravelCost(region.id);
-            const estimatedCoin = cost.dist * 18;
-            const here = region.id === state.currentRegion;
-            const canTravel = canTravelTo(region.id);
-            const reason = here
-              ? '你已在此地'
-              : state.money < cost.coinUse
-                ? '路费不足'
-                : '可以启程';
-            return `
-              <article class="travel-card">
-                <div>${sceneSvg(region.id)}</div>
-                <div class="travel-meta">
-                  <h4>${region.stair} · ${region.title}</h4>
-                  <p><strong>区域：</strong>${region.name}</p>
-                  <p><strong>特产：</strong>${getLocalLabel(region.id)}</p>
-                  <p><strong>需求：</strong>${getNeedLabel(region.id)}</p>
-                  <p><strong>消耗：</strong>${cost.dist === 0 ? '你已在此地' : `时日 ${cost.dayCost}，粮食最多 ${cost.dist} 份；若全用铜币约需 ${estimatedCoin}`}</p>
-                  <p><strong>启程状态：</strong>${reason}</p>
-                  ${
-                    here
-                    ? `<button class="btn-soft" disabled>当前驻留地</button>`
-                    : `<button class="btn" data-travel="${region.id}" ${canTravel ? '' : 'disabled'}>前往此地</button>`
-                  }
-                </div>
-              </article>
-            `;
-          }).join('')}
+        <div class="result-section">
+            <h2>旅行与交易日志</h2>
+            <div class="result-list" id="finalLogs"></div>
         </div>
-      `;
+
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px;">
+            <button class="btn secondary" onclick="restartGame()">重新开始</button>
+            <button class="btn ghost" onclick="showScreen('endingScreen')">返回结局页</button>
+        </div>
+    </div>
+</section>
+
+</div>
+
+<div id="modalMask" class="modal-mask">
+    <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+const HAN_BUILDING_ICON = `
+<svg class="han-building-svg" viewBox="0 0 96 96" role="img" aria-label="中式传统殿宇图标">
+    <defs>
+        <linearGradient id="roofGold" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#d9a441"/>
+            <stop offset="1" stop-color="#9f2f24"/>
+        </linearGradient>
+        <linearGradient id="wallRed" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#b94334"/>
+            <stop offset="1" stop-color="#7f241d"/>
+        </linearGradient>
+    </defs>
+    <path d="M10 42 C22 38 27 28 36 18 C42 11 54 11 60 18 C69 28 74 38 86 42 C73 45 23 45 10 42Z" fill="url(#roofGold)" stroke="#6d3b18" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M20 47 H76 L72 56 H24 Z" fill="#7b3f1f" stroke="#5b2d16" stroke-width="2" stroke-linejoin="round"/>
+    <rect x="25" y="56" width="46" height="25" rx="2" fill="url(#wallRed)" stroke="#5b2d16" stroke-width="2"/>
+    <rect x="31" y="56" width="6" height="25" fill="#f0c36a"/>
+    <rect x="59" y="56" width="6" height="25" fill="#f0c36a"/>
+    <rect x="42" y="61" width="12" height="20" rx="1" fill="#5b2d16"/>
+    <path d="M18 82 H78" stroke="#6d3b18" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="48" cy="19" r="4" fill="#f0c36a" stroke="#6d3b18" stroke-width="2"/>
+</svg>
+`;
+
+const GOODS = {
+    "牦牛": { icon: "🐂", origin: 1, type: "高寒牧区特产", desc: "适应青藏高原环境，是运输、生产与生活的重要伙伴。" },
+    "藏红花": { icon: "🌺", origin: 1, type: "藏药资源", desc: "珍贵药材，进入平原地区后具有较高交换价值。" },
+    "冬虫夏草": { icon: "🍄", origin: 1, type: "藏药资源", desc: "高原名贵药材，可满足第三阶梯对藏药医疗资源的需求。" },
+    "青稞": { icon: "🌾", origin: 1, type: "高原粮食", desc: "高寒地区重要作物，是高原生活的基础。" },
+
+    "骏马": { icon: "🐎", origin: 2, type: "战略与交通物资", desc: "草原游牧区优势物资，对农耕核心区的交通与军事非常重要。" },
+    "皮毛": { icon: "🧥", origin: 2, type: "御寒物资", desc: "寒冷地区的重要生活物资，也是第三阶梯的需求品。" },
+    "乳制品": { icon: "🥛", origin: 2, type: "游牧食品", desc: "体现草原畜牧生活方式，可与农耕区粮食互补。" },
+    "银饰": { icon: "💍", origin: 2, type: "苗族特色工艺", desc: "苗族特色手工艺品，具有文化展示与交换价值。" },
+
+    "丝绸": { icon: "🧵", origin: 3, type: "农耕手工业品", desc: "第三阶梯重要手工业品，是第一、第二阶梯都需要的外来物资。" },
+    "瓷器": { icon: "🏺", origin: 3, type: "农耕手工业品", desc: "工艺精美，常作为跨区域贸易的重要商品。" },
+    "茶叶": { icon: "🍵", origin: 3, type: "生活必需品", desc: "可补充维生素，是高原地区熬制酥油茶的重要物资。" },
+    "铁器": { icon: "⚒️", origin: 3, type: "战略生产物资", desc: "用于生产工具与生活器具，对高原和草原山地地区尤为重要。" },
+    "粮食": { icon: "🍚", origin: 3, type: "农业核心区产物", desc: "农业核心区优势物资，是第二阶梯的重要需求。" }
+};
+
+const STEPS = {
+    1: {
+        id: 1,
+        name: "第一阶梯",
+        geography: "青藏高原",
+        people: "藏族",
+        style: "高寒牧区",
+        products: ["牦牛", "藏红花", "冬虫夏草", "青稞"],
+        needs: ["铁器", "茶叶", "丝绸"],
+        needText: "寒冬将至，我们需要中原的铁器来打造生产工具，也需要茶叶来熬制酥油茶，还需要丝绸改善生活。必须让商队走向第三阶梯。"
+    },
+    2: {
+        id: 2,
+        name: "第二阶梯",
+        geography: "内蒙古草原、云贵高原、黄土高原",
+        people: "蒙古族、回族、苗族",
+        style: "草原游牧区与高原山地",
+        products: ["骏马", "皮毛", "乳制品", "银饰"],
+        needs: ["粮食", "丝绸", "瓷器", "铁器"],
+        needText: "草原和山地有骏马、皮毛、乳制品与银饰，却缺乏农业核心区稳定供给的粮食，也需要丝绸、瓷器和铁器来改善生产生活。"
+    },
+    3: {
+        id: 3,
+        name: "第三阶梯",
+        geography: "华北平原、长江中下游平原、四川盆地",
+        people: "汉族",
+        style: "农耕文明核心区",
+        products: ["丝绸", "瓷器", "茶叶", "铁器", "粮食"],
+        needs: ["骏马", "皮毛", "藏红花", "冬虫夏草"],
+        needText: "平原与盆地粮食充足，丝绸、瓷器、茶叶、铁器发达，但战马与交通物资不足，御寒皮毛与高原藏药也十分珍贵。"
     }
+};
 
-    function buildCultureChoices(){
-      const current = state.currentRegion;
-      const count = state.cultureCount[current] || 0;
-      const factor = [1, 0.65, 0.42][Math.min(count, 2)];
-      const away = current !== state.homeRegion;
+const IDENTITIES = [
+    {
+        step: 1,
+        title: "青藏高原的藏族部落成员",
+        icon: "🏔️",
+        money: 120,
+        inventory: { "牦牛": 2, "藏红花": 2, "冬虫夏草": 1, "青稞": 4 },
+        intro: "你生于青藏高原，熟悉高寒牧区生活。牦牛、藏药与青稞是你的优势，但铁器、茶叶和丝绸十分稀缺。"
+    },
+    {
+        step: 2,
+        title: "第二阶梯的草原山地商旅",
+        icon: "🐎",
+        money: 120,
+        inventory: { "骏马": 2, "皮毛": 3, "乳制品": 4, "银饰": 1 },
+        intro: "你往来于草原、高原与山地之间，手中有骏马、皮毛、乳制品和苗族银饰，但需要粮食、铁器、丝绸与瓷器。"
+    },
+    {
+        step: 3,
+        title: "第三阶梯的汉族商人",
+        icon: HAN_BUILDING_ICON,
+        money: 120,
+        inventory: { "丝绸": 2, "瓷器": 2, "茶叶": 3, "铁器": 2, "粮食": 5 },
+        intro: "你来自农耕文明核心区，拥有丝绸、瓷器、茶叶、铁器和粮食，但远方的骏马、皮毛与藏药同样不可或缺。"
+    }
+];
 
-      if(away){
-        return [
-          {
-            label:'交流生产技艺',
-            preview:'把家乡经验和当地手艺放在一起比较，寻找互补之处。',
-            integration:Math.max(1, Math.round(5 * factor)),
-            money:4,
-            days:1,
-            staminaCost:1,
-            text:'我主动比较彼此的工具、道路和生产方式。越比较，越能看出不同地理环境塑造出的生活并非对立，而是可以互相补足。'
-          },
-          {
-            label:'共饮共食，互赠礼物',
-            preview:'先讲节庆、饮食与风俗，再谈货路与价钱。',
-            integration:Math.max(2, Math.round(6 * factor)),
-            money:0,
-            days:1,
-            staminaCost:1,
-            gift:REGIONS[current].localGoods[0],
-            text:'我们围坐在一起，先说风俗，再谈道路。货物在桌上流动，故事也在心里扎根。离别时，对方送我一件象征友谊的小礼物。'
-          },
-          {
-            label:'只谈价钱，不多停留',
-            preview:'能赚一点，但很难留下真正的理解。',
-            integration:1,
-            money:7,
-            days:1,
-            staminaCost:1,
-            countsAsCulture:false,
-            text:'我只记下价钱与账本，确实赚了些钱，却错过了更深的理解。'
-          }
-        ];
-      }
-
-      return [
+const MARKET_HISTORY_EVENTS = {
+    1: [
         {
-          label:'召集乡亲商议远行',
-          preview:'先弄清家乡真正缺什么，再筹备下一次跨阶梯出发。',
-          integration:Math.max(1, Math.round(4 * factor)),
-          money:0,
-          days:1,
-          staminaCost:1,
-          text:'我把乡亲召集到一起，围着地图与货单商量：我们究竟缺什么，下一支商队应走向哪里。'
+            title: "茶马互市",
+            icon: "🍵🐎",
+            fact: "青藏高原不产茶，川滇茶叶经马帮进入高原地区，高原地区的马匹、药材等也进入内地。茶马往来体现了不同地理区域之间的生活互补。",
+            question: "面对茶马互市，哪种做法最能促进各民族交流交往交融？",
+            choices: [
+                { text: "公平交换茶叶、马匹、药材，让各地生活需求得到满足。", good: true, result: "你理解了茶马互市的核心：不同地区因物产差异而互通有无。" },
+                { text: "只把茶叶卖得越贵越好，不关心高原地区的真实需求。", good: false, result: "你只看到了短期利益，没有理解贸易背后的生活互补关系。" }
+            ],
+            moneyReward: 20
         },
         {
-          label:'整理本地特产与技艺',
-          preview:'把能代表家乡的物产准备上路，明确交换价值。',
-          integration:Math.max(1, Math.round(3 * factor)),
-          money:0,
-          days:1,
-          staminaCost:1,
-          gift:REGIONS[current].localGoods[1] || REGIONS[current].localGoods[0],
-          text:'我盘点本地特产，越整理越明白：正是地理环境塑造出的差异，让这些东西能够走向远方。'
+            title: "文成公主进藏",
+            icon: "👑🏔️",
+            fact: "文成公主入藏带去了医药、工匠技艺、谷物种子等物质与文化成果，促进了唐蕃之间的长期交流。",
+            question: "如果你是随行商旅，怎样做更能体现文化交流？",
+            choices: [
+                { text: "尊重当地习俗，同时介绍中原医药、农作和工艺知识。", good: true, result: "你推动了技术、生活经验与礼俗的交流。" },
+                { text: "只运送货物，不愿了解当地语言、礼仪和生活方式。", good: false, result: "货物可以到达远方，但缺少理解就难以形成深层认同。" }
+            ],
+            moneyReward: 20
         },
         {
-          label:'只在本地闲逛',
-          preview:'稍作见闻，但推进有限。',
-          integration:0,
-          money:3,
-          days:1,
-          staminaCost:1,
-          countsAsCulture:false,
-          text:'我在熟悉的街巷与市集中转了一圈，心里虽安稳，却没有真正拓宽眼界。'
+            title: "唐蕃古道上的往来",
+            icon: "🛤️📜",
+            fact: "唐蕃之间长期存在使节、商旅和文化往来，物资、技术、礼俗在道路上不断流动。",
+            question: "商队经过唐蕃古道时，怎样能让交流更持久？",
+            choices: [
+                { text: "记录沿途见闻，学习当地称谓、礼俗和交易规则。", good: true, result: "你把道路变成了知识与情感交流的通道。" },
+                { text: "只选择最赚钱的买卖，不与当地人建立长期关系。", good: false, result: "没有长期互信，商路就难以稳定。" }
+            ],
+            moneyReward: 20
         }
-      ];
-    }
-
-    function renderCulture(){
-      const current = state.currentRegion;
-      const away = current !== state.homeRegion;
-      const npc = regionNpc(current);
-
-      ui.cultureChoices = buildCultureChoices();
-
-      const dialogues = away
-        ? [
-            {
-              side:'right',
-              avatar:playerAvatarType(),
-              name:'我',
-              text:`我从${REGIONS[state.homeRegion].title}而来，带着货物，也带着家乡的需要。走到这里，我想先弄明白：你们真正缺什么，又最看重什么。`
-            },
-            {
-              side:'left',
-              avatar:npc.avatar,
-              name:npc.name,
-              text:`路远不怕，怕的是不相通。你若愿意讲讲家乡，我们也愿意告诉你这里的道路、习俗与所缺之物。买卖长久，先要彼此听得懂。`
-            }
-          ]
-        : [
-            {
-              side:'left',
-              avatar:npc.avatar,
-              name:npc.name,
-              text:`只守着家门，是看不见天下缺与需的。你若要让商队走得更远，就得先明白：家乡真正缺什么，又能拿什么去换。`
-            },
-            {
-              side:'right',
-              avatar:playerAvatarType(),
-              name:'我',
-              text:'我知道了。远行不只是离开，更是把家乡放在更大的天地里重新理解。'
-            }
-          ];
-
-      actionPanel.innerHTML = `
-        <div class="culture-box">
-          ${dialogueHtml(dialogues)}
-          <div class="choice-list">
-            ${ui.cultureChoices.map((choice, index) => `
-              <button class="btn-choice" data-culture="${index}">
-                <strong>${choice.label}</strong>
-                <span class="muted small">${choice.preview}（消耗时日 ${choice.days}）</span>
-              </button>
-            `).join('')}
-          </div>
-          <div class="culture-tip subcard">说明：在异地进行积极交流，更容易推进章节目标；但在同一地区重复交流，收益会逐渐降低。</div>
-        </div>
-      `;
-    }
-
-    function renderCamp(){
-      actionPanel.innerHTML = `
-        <div class="culture-box">
-          ${dialogueHtml([
-            {
-              side:'left',
-              avatar:'narrator',
-              name:'营地书记',
-              text:'课堂版取消了体力限制，营地不再用于“回血”。这里改为路线复盘与补给整备：学生可以用少量时间换取粮食、提示和一点交融度，理解稳定商路需要组织、协商与准备。'
-            },
-            {
-              side:'right',
-              avatar:playerAvatarType(),
-              name:'我',
-              text:'真正重要的不是被体力卡住，而是想清楚下一站需要什么、我能带去什么，以及怎样让往来变得更稳定。'
-            }
-          ])}
-          <div class="choice-list">
-            <button class="btn-choice" data-rest="small" ${state.money >= 8 ? '' : 'disabled'}>
-              <strong>路线复盘</strong>
-              <span class="muted small">花费 8 铜币，获得 1 份粮食，交融度 +1，消耗 3 日。</span>
-            </button>
-            <button class="btn-choice" data-rest="full" ${state.money >= 18 ? '' : 'disabled'}>
-              <strong>组织互市筹备会</strong>
-              <span class="muted small">花费 18 铜币，获得 2 份粮食，交融度 +2，消耗 5 日。</span>
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-
-    function renderGame(){
-      renderScene();
-      renderMetrics();
-      renderChapter();
-      renderMission();
-      renderPack();
-      renderLogs();
-      renderTab();
-      saveGame();
-    }
-
-    function postAction(trigger, from, to){
-      const chapterOpened = checkChapterProgress();
-      renderGame();
-
-      if(chapterOpened) return;
-      if(maybeWin()) return;
-      if(checkFail()) return;
-      if(eventModal.classList.contains('hidden')) maybeTriggerEvent(trigger, from, to);
-    }
-
-    function buyItem(good){
-      const price = getBuyPrice(state.currentRegion, good);
-      if(state.money < price){
-        addLog(`我看中了${GOODS[good].name}，可惜囊中只有 ${state.money} 铜币，不够支付 ${price} 铜币。`, 'warn');
-        renderGame();
-        return;
-      }
-
-      state.money -= price;
-      addItem(good, 1, state.currentRegion);
-      state.stats.trades += 1;
-      passDays(0, '集市议价');
-      addLog(`我在${REGIONS[state.currentRegion].stair}购入 1 件${GOODS[good].name}，花去 ${price} 铜币。`, '');
-      postAction('buy', state.currentRegion, state.currentRegion);
-    }
-
-
-    function sellItem(good){
-      if(totalOf(good) <= 0){
-        addLog(`我的背包里没有${GOODS[good].name}可卖。`, 'warn');
-        renderGame();
-        return;
-      }
-
-      const removed = removeItem(good, 1)[0];
-      const price = getSellPrice(state.currentRegion, good);
-
-      state.money += price;
-      state.stats.trades += 1;
-      state.stats.sales += 1;
-      passDays(0, '集市成交');
-
-      let bonus = 0;
-      if(removed && removed.origin !== state.currentRegion && removed.acquiredAt !== state.currentRegion && goodMatchesNeed(state.currentRegion, good)){
-        bonus = calcTradeBonus(state.currentRegion, good);
-        changeIntegration(bonus);
-        state.stats.effectiveTrades += 1;
-
-        if(state.currentRegion === 3 && (good === 'saffron' || good === 'cordyceps')){
-          addLog(`我把${GOODS[good].name}作为藏药类珍品带到第三阶梯出售。平原对高原药材的需求，清楚地说明了不同区域之间的互补关系。交融度 +${bonus}。`, 'bonus');
-        }else{
-          addLog(`我把${GOODS[good].name}卖到真正需要它的地方，所得不只是铜币，还有彼此依赖的加深。交融度 +${bonus}。`, 'bonus');
+    ],
+    2: [
+        {
+            title: "榷场互市",
+            icon: "🏺🐎",
+            fact: "榷场、互市是古代中原王朝与周边各族进行和平物资交换的重要机制，茶、丝绸、粮食与马匹、皮毛、畜产品等在此流通。",
+            question: "在榷场交易时，哪种做法最能促进稳定交流？",
+            choices: [
+                { text: "遵守市价和规则，让粮食、茶叶、马匹、皮毛有序流通。", good: true, result: "你维护了稳定互市，也让不同地区形成利益联系。" },
+                { text: "故意制造缺货，哄抬价格，让别人难以获得急需物资。", good: false, result: "这种做法会破坏互信，不利于长期交往。" }
+            ],
+            moneyReward: 20
+        },
+        {
+            title: "农牧互补",
+            icon: "🌾🐑",
+            fact: "农耕地区的粮食、布匹、铁器与草原地区的马匹、皮毛、畜产品长期互补，推动了不同生产方式之间的联系。",
+            question: "面对农牧物产差异，最合理的选择是？",
+            choices: [
+                { text: "把粮食、铁器带到草原山地，再把马匹、皮毛带回农耕区。", good: true, result: "你抓住了农牧互补的历史逻辑。" },
+                { text: "认为只有本地物产重要，拒绝外来商品。", good: false, result: "封闭会削弱互补，也会限制生活改善。" }
+            ],
+            moneyReward: 20
+        },
+        {
+            title: "山地集市与苗族银饰",
+            icon: "⛰️💍",
+            fact: "山地集市中，银饰、皮毛、粮食、瓷器等物资相遇。集市不仅是交易场所，也是习俗、审美和技艺交流的空间。",
+            question: "看到苗族银饰工艺时，你会怎样做？",
+            choices: [
+                { text: "尊重并介绍这种工艺，让更多地区认识山地民族的审美与技艺。", good: true, result: "你让商品成为文化被理解的媒介。" },
+                { text: "只按金属重量估价，不关心它的民族文化含义。", good: false, result: "忽视文化价值，会让交流停留在浅层买卖。" }
+            ],
+            moneyReward: 20
         }
-      }else{
-        addLog(`我在${REGIONS[state.currentRegion].stair}卖出 1 件${GOODS[good].name}，收入 ${price} 铜币。`, '');
-      }
-
-      postAction('market', state.currentRegion, state.currentRegion);
-    }
-
-
-    function travelTo(target){
-      if(target === state.currentRegion) return;
-
-      const { dist, grainUse, coinUse, dayCost } = getTravelCost(target);
-
-      if(state.money < coinUse){
-        addLog(`路费不够。此次至少还需要 ${coinUse} 铜币，而我只有 ${state.money} 铜币。`, 'warn');
-        renderGame();
-        return;
-      }
-
-      if(grainUse > 0) removeItem('grain', grainUse);
-      state.money -= coinUse;
-
-      const from = state.currentRegion;
-      const firstVisit = !state.visitedRegions.has(target);
-      state.currentRegion = target;
-      state.visitedRegions.add(target);
-
-      passDays(dayCost, '翻越阶梯');
-
-      addLog(`我带着商队从${REGIONS[from].stair}出发，跨越 ${dist} 级阶梯，抵达${REGIONS[target].stair}。${grainUse ? `沿途消耗了 ${grainUse} 份粮食，` : ''}${coinUse ? `另付路费 ${coinUse} 铜币，` : ''}新的互通道路又向前延伸了一步。`, 'important');
-
-      if(firstVisit && target !== state.homeRegion){
-        changeIntegration(3);
-        addLog(`这是我第一次走到${REGIONS[target].title}。仅仅踏出家乡，去看见别人如何生活，本身就是理解彼此的开始。交融度 +3。`, 'bonus');
-      }
-
-      postAction('travel', from, target);
-    }
-
-
-    function chooseCulture(index){
-      const choice = ui.cultureChoices[index];
-      if(!choice) return;
-
-      const meaningful = choice.countsAsCulture !== false;
-      if(meaningful){
-        state.cultureCount[state.currentRegion] += 1;
-        state.stats.culture += 1;
-        if(state.currentRegion !== state.homeRegion) state.stats.foreignCulture += 1;
-      }
-      changeIntegration(choice.integration);
-      state.money += choice.money || 0;
-      if(choice.gift) addItem(choice.gift, 1, state.currentRegion);
-
-      passDays(choice.days, '停留交往');
-
-      let text = choice.text;
-      if(choice.integration) text += ` 交融度 +${choice.integration}`;
-      if(choice.money) text += `，铜币 +${choice.money}`;
-      if(choice.gift) text += `，并获得 1 件${GOODS[choice.gift].name}`;
-      text += '。';
-
-      if(!meaningful) text += ' 这次停留未计入“有效交流”进度。';
-      addLog(text, choice.integration >= 4 ? 'bonus' : '');
-      postAction('culture', state.currentRegion, state.currentRegion);
-    }
-
-
-    function restCamp(type){
-      if(type === 'small'){
-        if(state.money < 8){
-          addLog('路线复盘需要花费 8 铜币，如今盘缠不足。', 'warn');
-          renderGame();
-          return;
+    ],
+    3: [
+        {
+            title: "丝绸之路",
+            icon: "🧵🐫",
+            fact: "张骞通西域后，中原与西域往来更加频繁，商旅、使节和不同族群在道路上相遇，推动了物产与文化交流。",
+            question: "在丝绸之路上，怎样才能让商路成为交流之路？",
+            choices: [
+                { text: "带去丝绸、瓷器，也学习沿途的语言、音乐、饮食和习俗。", good: true, result: "你理解了丝绸之路不仅运送商品，也沟通文化。" },
+                { text: "只把沿途看作赚钱地点，不记录任何文化见闻。", good: false, result: "这样只能完成买卖，难以形成更深层的理解。" }
+            ],
+            moneyReward: 20
+        },
+        {
+            title: "屯垦戍边",
+            icon: "🌾🛡️",
+            fact: "屯垦戍边是中国历史上开发和保卫边疆的重要方式。军民、移民与当地各族在生产生活中逐渐形成联系。",
+            question: "屯垦戍边中，哪种做法更能促进共同生活？",
+            choices: [
+                { text: "共同修渠、耕作、守边，在生产协作中建立邻里关系。", good: true, result: "你理解了共居、共事、共学对民族交融的重要作用。" },
+                { text: "只修自己的田地，不与当地各族合作。", good: false, result: "缺少生产协作，就难以形成稳定共同体。" }
+            ],
+            moneyReward: 20
+        },
+        {
+            title: "边地市场中的茶叶、瓷器与马匹",
+            icon: "🏺🍵",
+            fact: "中原地区的茶叶、丝绸、瓷器、粮食等通过市场进入边疆地区，边疆地区的马匹、皮毛、药材等也进入中原。",
+            question: "作为第三阶梯商人，你怎样安排贸易更合理？",
+            choices: [
+                { text: "把茶叶、铁器、粮食带到急需地区，再带回马匹、皮毛和藏药。", good: true, result: "你把农耕核心区与高原、草原山地连接起来。" },
+                { text: "只在本地低买低卖，不愿承担跨区域运输。", good: false, result: "不跨区域流动，就难以体现三级阶梯之间的互补。" }
+            ],
+            moneyReward: 20
         }
-        state.money -= 8;
-        addItem('grain', 1, state.currentRegion);
-        changeIntegration(1);
-        state.stats.rests += 1;
-        passDays(3, '路线复盘');
-        addLog('我和同伴复盘下一站路线，补充 1 份粮食，也更清楚哪里需要什么、我们能带去什么。资金 -8，交融度 +1。', 'important');
-      }else{
-        if(state.money < 18){
-          addLog('组织互市筹备会需要 18 铜币，而我的盘缠还不够。', 'warn');
-          renderGame();
-          return;
-        }
-        state.money -= 18;
-        addItem('grain', 2, state.currentRegion);
-        changeIntegration(2);
-        state.stats.rests += 1;
-        passDays(5, '互市筹备');
-        addLog('我邀请向导、商旅和本地长者一起商议互市路线，补充 2 份粮食。稳定往来需要组织和信任，交融度 +2。资金 -18。', 'important');
-      }
-      postAction('rest', state.currentRegion, state.currentRegion);
-    }
+    ]
+};
 
+let state = {
+    currentStep: 1,
+    identity: null,
+    money: 0,
+    inventory: {},
+    fusion: 0,
+    turn: 1,
+    visited: {},
+    logs: [],
+    cultureRecords: {},
+    lastTradeMessage: "",
+    marketTradeCount: {},
+    marketEventTargets: {},
+    marketEventTriggered: {},
+    marketEventUsedTitles: {},
+    historyEvents: []
+};
 
-    function submitOrder(orderId){
-      const order = state.orders.find(o => o.id === orderId);
-      if(!order || order.completed) return;
+function showScreen(id){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
 
-      if(order.region !== state.currentRegion){
-        addLog('这份订单必须在指定阶梯交付。', 'warn');
-        renderGame();
-        return;
-      }
+function showIdentityScreen(){
+    renderIdentities();
+    showScreen("identityScreen");
+}
 
-      for(const [good, qty] of Object.entries(order.needs)){
-        if(totalOf(good) < qty){
-          addLog(`要完成“${order.title}”，我还缺少 ${GOODS[good].name}。`, 'warn');
-          renderGame();
-          return;
-        }
-      }
-
-      for(const [good, qty] of Object.entries(order.needs)) removeItem(good, qty);
-
-      state.money += order.rewardMoney;
-      changeIntegration(order.rewardIntegration);
-      state.stats.ordersCompleted += 1;
-      order.completed = true;
-
-      passDays(1, '交付订单');
-      addLog(`【完成订单】${order.title}。这不再只是一次零散买卖，而是一条更稳固的互通之路。铜币 +${order.rewardMoney}，交融度 +${order.rewardIntegration}。`, 'bonus');
-
-      postAction('order', state.currentRegion, state.currentRegion);
-    }
-
-
-    function getEventPool(trigger, from, to){
-      const current = state.currentRegion;
-      const pool = [];
-
-      if((trigger === 'travel' && ((from === 1 && to === 3) || (from === 3 && to === 1))) || current === 1 || current === 3){
-        pool.push({
-          id: 'teaHorse',
-          emoji: '🫖🐎',
-          title: '茶马古道开启',
-          desc: '山路上的马帮与背夫把茶叶、战马、药材和手工器物带过关山。沿线的人们正在商量：该如何让互市更稳当、更长久？',
-          choices: [
-            { label:'加入守信互市', result:'我主张按约称量、守信交易。道路因此更可靠，来往的人也越来越多。', integration:8, money:8 },
-            { label:'只求一时高价', result:'我把注意力全放在短期利润上，确实赚得快，却失了长远口碑。', integration:1, money:12 }
-          ]
-        });
-      }
-
-      if(current === 1 || current === 3){
-        pool.push({
-          id: 'princess',
-          emoji: '👑📜',
-          title: '文成公主进藏',
-          desc: '和亲与往来使节带去新的工艺、医药、礼仪与见闻。人们议论：道路所连接的，究竟只是货物，还是更广阔的文化世界？',
-          choices: [
-            { label:'学习并传播新工艺', result:'我把沿途见闻讲给更多同行听，明白了交流不只改变市场，也改变生活方式。', integration:9, money:4, gift:'silk' },
-            { label:'只把它当作谈资', result:'我听过故事便散去，没有真正把新知转化为行动。', integration:2, money:0 }
-          ]
-        });
-      }
-
-      if(trigger === 'travel' || current === 2 || current === 3){
-        pool.push({
-          id: 'yuchang',
-          emoji: '🏮⚖️',
-          title: '榷场互市',
-          desc: '定期互市让草原、平原与高原的商队有了更稳定的见面之所。守秩序的人越多，来往越频繁，彼此依赖也越深。',
-          choices: [
-            { label:'遵守契约与尺度', result:'我按公道定价，也鼓励他人照章行事。更多商队因此愿意再来。', integration:7, money:9 },
-            { label:'趁机囤货抬价', result:'我赚到了一笔快钱，但市场的信任也被消耗了。', integration:1, money:12 }
-          ]
-        });
-      }
-
-      if(current === 2 || from === 2 || to === 2){
-        pool.push({
-          id: 'steppeTrade',
-          emoji: '🐴🧭',
-          title: '草原与山地商路',
-          desc: '良马与皮毛向外流动，粮食、铁器、瓷器与丝绸向内进入。多民族商旅在这里相遇，商路也因此不断扩展。',
-          choices: [
-            { label:'以马换铁，以皮毛换粮', result:'我主动撮合互补交易，大家都看见了不同地区之间不可替代的价值。', integration:8, money:8, gift:'horse' },
-            { label:'只挑最便宜的货走', result:'我完成了买卖，却没有真正扩大交流的深度。', integration:1, money:6 }
-          ]
-        });
-      }
-
-      if(trigger === 'rest'){
-        pool.push({
-          id:'campTalk',
-          emoji:'🔥🗺️',
-          title:'夜宿营地',
-          desc:'夜里围火而坐，不同来路的人谈起祖辈的道路、婚姻与市集。有人说，货路久了，亲缘和习俗也会跟着走动。',
-          choices:[
-            { label:'认真聆听并记录', result:'我把不同人的故事记在心里，也明白共同体意识往往在漫长的往来中生长。', integration:6, money:0 },
-            { label:'早点休息，不再多问', result:'我养足了精神，却没有多了解几分彼此的过去。', integration:1, money:0 }
-          ]
-        });
-      }
-
-      return pool;
-    }
-
-    function maybeTriggerEvent(trigger, from, to){
-      const chance = trigger === 'travel' ? 0.55 : trigger === 'rest' ? 0.25 : trigger === 'buy' ? 0.06 : trigger === 'market' ? 0.12 : 0.18;
-      if(Math.random() > chance) return;
-
-      const pool = getEventPool(trigger, from, to);
-      if(!pool.length) return;
-
-      const minSeen = Math.min(...pool.map(evt => state.eventSeen[evt.id] || 0));
-      const candidates = pool.filter(evt => (state.eventSeen[evt.id] || 0) === minSeen);
-      const event = candidates[Math.floor(Math.random() * candidates.length)];
-      openEvent(event);
-    }
-
-    function openEvent(event){
-      state.currentEvent = event;
-      eventModal.classList.remove('hidden');
-      eventModal.innerHTML = `
-        <div class="modal-card">
-          <div class="modal-head">
-            <div class="modal-emoji">${event.emoji}</div>
+function renderIdentities(){
+    const grid=document.getElementById("identityGrid");
+    grid.innerHTML="";
+    IDENTITIES.forEach((role,index)=>{
+        const step=STEPS[role.step];
+        const div=document.createElement("div");
+        div.className="identity-card";
+        div.innerHTML=`
             <div>
-              <h2>${event.title}</h2>
-              <p>${event.desc}</p>
+                <div class="big-icon">${role.icon}</div>
+                <h3>${role.title}</h3>
+                <p>${role.intro}</p>
+                <div class="tag-list">
+                    <span class="tag">${step.name}</span>
+                    <span class="tag">${step.geography}</span>
+                    <span class="tag">${step.people}</span>
+                </div>
             </div>
-          </div>
-          ${dialogueHtml([
-            {
-              side:'left',
-              avatar:'narrator',
-              name:'沿途见闻',
-              text:event.desc
-            }
-          ])}
-          <div class="choice-list">
-            ${event.choices.map((choice, index) => `
-              <button class="btn-choice" data-event-choice="${index}">
-                <strong>${choice.label}</strong>
-                <span class="muted small">${choice.result}</span>
-              </button>
-            `).join('')}
-          </div>
+            <button class="btn" style="width:100%;margin-top:16px;">选择此身份</button>
+        `;
+        div.onclick=()=>startGame(index);
+        grid.appendChild(div);
+    });
+}
+
+function startGame(index){
+    const role=IDENTITIES[index];
+    state={
+        currentStep: role.step,
+        identity: role,
+        money: role.money,
+        inventory: JSON.parse(JSON.stringify(role.inventory)),
+        fusion: 0,
+        turn: 1,
+        visited: { [role.step]: true },
+        logs: [],
+        cultureRecords: {},
+        lastTradeMessage: "",
+        marketTradeCount: {},
+        marketEventTargets: {},
+        marketEventTriggered: {},
+        marketEventUsedTitles: {},
+        historyEvents: []
+    };
+    addLog(`你选择成为“${role.title}”，带着本地物产踏上阶梯贸易之路。`);
+    addLog(STEPS[role.step].needText);
+    showScreen("gameScreen");
+    renderGame();
+    openStoryIntro();
+}
+
+function restartGame(){
+    showScreen("startScreen");
+}
+
+function addLog(text){
+    state.logs.unshift(text);
+    state.logs=state.logs.slice(0,18);
+}
+
+function getVisitedCount(){
+    return Object.keys(state.visited).length;
+}
+
+function getCultureCount(){
+    return Object.keys(state.cultureRecords).length;
+}
+
+function getVictoryStatus(){
+    return {
+        visitedEnough: getVisitedCount() >= 3,
+        cultureEnough: getCultureCount() >= 3,
+        moneyEnough: state.money >= 1000,
+        canWin: getVisitedCount() >= 3 && getCultureCount() >= 3 && state.money >= 1000
+    };
+}
+
+function renderGame(){
+    const step=STEPS[state.currentStep];
+
+    document.getElementById("currentLocation").textContent=`${step.name}：${step.geography}`;
+    document.getElementById("currentPeople").textContent=`${step.people}｜${step.style}`;
+    document.getElementById("fusionText").textContent=state.fusion;
+    document.getElementById("fusionFill").style.width=`${Math.min(100,state.fusion)}%`;
+    document.getElementById("moneyText").textContent=state.money;
+    document.getElementById("turnText").textContent=state.turn;
+    document.getElementById("needsBox").innerHTML=`<strong>本地需求提示：</strong>${step.needText}`;
+
+    document.getElementById("goalText").textContent=
+        `到达 ${getVisitedCount()}/3｜文化 ${getCultureCount()}/3｜资金 ${state.money}/1000`;
+
+    document.getElementById("goalBox").innerHTML=`
+        <strong>通关条件：</strong>
+        到达三个阶梯；每个阶梯至少完成一次文化交流；资金达到 1000 钱。
+        <br>
+        当前进度：到达 <strong>${getVisitedCount()}/3</strong> 个阶梯，
+        文化交流 <strong>${getCultureCount()}/3</strong> 个阶梯，
+        资金 <strong>${state.money}/1000</strong> 钱。
+    `;
+
+    document.querySelectorAll(".step-zone").forEach(z=>z.classList.remove("active"));
+    document.getElementById(`zone${state.currentStep}`).classList.add("active");
+
+    const caravan=document.getElementById("caravan");
+    if(window.innerWidth>900){
+        const pos={
+            1:{left:"20%",top:"47%"},
+            2:{left:"51%",top:"52%"},
+            3:{left:"80%",top:"58%"}
+        };
+        caravan.style.left=pos[state.currentStep].left;
+        caravan.style.top=pos[state.currentStep].top;
+    }else{
+        const pos={
+            1:{top:"17%"},
+            2:{top:"50%"},
+            3:{top:"82%"}
+        };
+        caravan.style.top=pos[state.currentStep].top;
+    }
+
+    renderInventory();
+    renderLogs();
+
+    const victory=getVictoryStatus();
+    if(victory.canWin){
+        setTimeout(()=>showScreen("endingScreen"),650);
+    }
+}
+
+function renderInventory(){
+    const box=document.getElementById("inventoryList");
+    box.innerHTML="";
+    const entries=Object.entries(state.inventory).filter(([_,count])=>count>0);
+
+    if(entries.length===0){
+        box.innerHTML=`<div class="log-item">背包暂时空空如也。请先在本地市场购买物资。</div>`;
+        return;
+    }
+
+    entries.forEach(([name,count])=>{
+        const good=GOODS[name];
+        const div=document.createElement("div");
+        div.className="item-row";
+        div.innerHTML=`
+            <span>${good.icon} ${name}</span>
+            <strong>× ${count}</strong>
+        `;
+        box.appendChild(div);
+    });
+}
+
+function renderLogs(){
+    const box=document.getElementById("logList");
+    box.innerHTML="";
+    state.logs.forEach(log=>{
+        const div=document.createElement("div");
+        div.className="log-item";
+        div.textContent=log;
+        box.appendChild(div);
+    });
+}
+
+function buyPrice(item){
+    const origin=GOODS[item].origin;
+    if(origin===state.currentStep) return 10;
+    if(STEPS[state.currentStep].needs.includes(item)) return 34;
+    return 24;
+}
+
+function sellPrice(item){
+    const origin=GOODS[item].origin;
+    if(origin===state.currentStep) return 6;
+    if(STEPS[state.currentStep].needs.includes(item)) return 52;
+    return 24;
+}
+
+function increaseFusionByTrade(){
+    state.fusion += 1;
+}
+
+function shuffleArray(arr){
+    const copy=arr.slice();
+    for(let i=copy.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [copy[i],copy[j]]=[copy[j],copy[i]];
+    }
+    return copy;
+}
+
+function ensureMarketEventPlan(stepId){
+    if(state.marketEventTargets[stepId]) return;
+
+    const eventTotal=Math.random()<0.5 ? 2 : 3;
+    const possibleTradeMoments=[2,3,5,6,8,10];
+
+    state.marketEventTargets[stepId]=shuffleArray(possibleTradeMoments)
+        .slice(0,eventTotal)
+        .sort((a,b)=>a-b);
+
+    state.marketEventTriggered[stepId]=[];
+    state.marketTradeCount[stepId]=0;
+    state.marketEventUsedTitles[stepId]=[];
+}
+
+function recordMarketTradeAndMaybeEvent(){
+    const stepId=state.currentStep;
+    ensureMarketEventPlan(stepId);
+
+    state.marketTradeCount[stepId] += 1;
+
+    const tradeCount=state.marketTradeCount[stepId];
+    const targets=state.marketEventTargets[stepId];
+    const triggered=state.marketEventTriggered[stepId];
+
+    if(targets.includes(tradeCount) && !triggered.includes(tradeCount)){
+        triggered.push(tradeCount);
+        setTimeout(()=>{
+            openStepHistoryEvent(stepId);
+        },350);
+    }
+}
+
+function safeText(text){
+    return String(text)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'")
+        .replace(/\n/g,"");
+}
+
+function openStepHistoryEvent(stepId){
+    const pool=MARKET_HISTORY_EVENTS[stepId] || [];
+    if(pool.length===0) return;
+
+    const used=state.marketEventUsedTitles[stepId] || [];
+    let available=pool.filter(e=>!used.includes(e.title));
+    if(available.length===0) available=pool;
+
+    const event=available[Math.floor(Math.random()*available.length)];
+    state.marketEventUsedTitles[stepId]=used.concat(event.title);
+
+    const choices=shuffleArray(event.choices);
+
+    showModal(`
+        <h2>${event.icon} ${event.title}</h2>
+        <div class="goal-box">
+            <strong>历史事实：</strong>${event.fact}
         </div>
-      `;
+        <p><strong>课堂思考：</strong>${event.question}</p>
+        <div class="choice-list">
+            <button class="choice" onclick="resolveMarketHistoryEvent(${event.moneyReward}, ${choices[0].good}, '${safeText(event.title)}', '${safeText(choices[0].result)}')">
+                ${choices[0].text}
+            </button>
+            <button class="choice" onclick="resolveMarketHistoryEvent(${event.moneyReward}, ${choices[1].good}, '${safeText(event.title)}', '${safeText(choices[1].result)}')">
+                ${choices[1].text}
+            </button>
+        </div>
+    `);
+}
+
+function resolveMarketHistoryEvent(moneyReward, good, title, result){
+    const stepName = STEPS[state.currentStep].name;
+    const placeName = STEPS[state.currentStep].geography;
+
+    if(good){
+        state.money += moneyReward;
+        state.lastTradeMessage = `历史事件“${title}”：选择正确，获得互信收益 <strong>+${moneyReward}</strong> 钱。${result}`;
+        addLog(`历史事件“${title}”：选择正确，获得互信收益 ${moneyReward} 钱。${result}`);
+
+        state.historyEvents.push({
+            title,
+            stepName,
+            placeName,
+            good:true,
+            reward:moneyReward,
+            result
+        });
+    }else{
+        state.lastTradeMessage = `历史事件“${title}”：${result}`;
+        addLog(`历史事件“${title}”：${result}`);
+
+        state.historyEvents.push({
+            title,
+            stepName,
+            placeName,
+            good:false,
+            reward:0,
+            result
+        });
     }
 
-    function chooseEvent(index){
-      const event = state.currentEvent;
-      if(!event) return;
-      const choice = event.choices[index];
-      if(!choice) return;
+    closeModal();
+    renderGame();
+    setTimeout(openMarket,120);
+}
 
-      state.eventSeen[event.id] = (state.eventSeen[event.id] || 0) + 1;
-      state.stats.events += 1;
-      changeIntegration(choice.integration || 0);
-      state.money += choice.money || 0;
-      if(choice.gift) addItem(choice.gift, 1, state.currentRegion);
+function closeModal(){
+    document.getElementById("modalMask").classList.remove("active");
+}
 
-      let text = `【${event.title}】${choice.result}`;
-      if(choice.integration) text += ` 交融度 +${choice.integration}`;
-      if(choice.money) text += `，铜币 +${choice.money}`;
-      if(choice.gift) text += `，获得 1 件${GOODS[choice.gift].name}`;
-      text += '。';
+function showModal(html){
+    document.getElementById("modalContent").innerHTML=html;
+    document.getElementById("modalMask").classList.add("active");
+}
 
-      addLog(text, choice.integration >= 7 ? 'bonus' : 'important');
-      state.currentEvent = null;
-      closeNarrativeModal();
-      renderGame();
-      if(maybeWin()) return;
-      checkFail();
+function openGuide(){
+    showModal(`
+        <h2>玩法说明</h2>
+        <p>
+            游戏目标是通过贸易、远行与文化交流，理解不同地理阶梯之间为什么会产生互通有无的历史需求。
+        </p>
+        <p>
+            当前规则：每完成一次买入或卖出，中华民族交融度 +1；每个阶梯必须至少完成一次文化交流；最终资金达到 1000 钱后，才能通关。
+        </p>
+        <p>
+            本地特产价格低，外来急需物资卖价高。每个阶梯的市场交易中，会随机出现 2—3 次历史事件卡片，同学们需要根据史实选择更有利于交流交往交融的做法。
+        </p>
+        <button class="btn" onclick="closeModal()">明白了</button>
+    `);
+}
+
+function openStoryIntro(){
+    const step=STEPS[state.currentStep];
+    showModal(`
+        <h2>旅程开始</h2>
+        <div class="dialogue">
+            <div class="avatar">${state.identity.icon}</div>
+            <div class="dialogue-text">
+                <strong>你心中想到：</strong><br>
+                我来自${step.geography}，这里生活着${step.people}，属于${step.style}。
+                我们拥有${step.products.join("、")}，但也有无法仅靠本地环境解决的需求。
+                ${step.needText}
+            </div>
+        </div>
+        <button class="btn" onclick="closeModal()">出发</button>
+    `);
+}
+
+function openMarket(){
+    ensureMarketEventPlan(state.currentStep);
+
+    const items=Object.keys(GOODS);
+    const step=STEPS[state.currentStep];
+    const tradeCount=state.marketTradeCount[state.currentStep] || 0;
+    const targets=state.marketEventTargets[state.currentStep] || [];
+    const triggered=state.marketEventTriggered[state.currentStep] || [];
+    const totalEvents=targets.length;
+    const doneEvents=triggered.length;
+
+    let html=`
+        <h2>${step.name}集市</h2>
+
+        <div class="market-status">
+            <div class="market-stat">
+                <small>当前资金</small>
+                <strong>${state.money}</strong> 钱
+            </div>
+            <div class="market-stat">
+                <small>交融度</small>
+                <strong>${state.fusion}</strong>
+            </div>
+            <div class="market-stat">
+                <small>当前位置</small>
+                <strong>${step.name}</strong>
+            </div>
+            <div class="market-stat">
+                <small>本阶梯历史事件</small>
+                <strong>${doneEvents}/${totalEvents}</strong>
+            </div>
+        </div>
+
+        <div class="goal-box">
+            本地特产买入便宜；外来且本地急需的物资卖价更高。
+            每完成一次买入或卖出，交融度 +1。
+            <br>
+            本阶梯已完成市场交易 <strong>${tradeCount}</strong> 次，历史事件会在若干次交易后随机出现。
+        </div>
+    `;
+
+    if(state.lastTradeMessage){
+        html+=`
+            <div class="needs-box" style="background:rgba(59,122,104,.09);border-color:rgba(59,122,104,.24);">
+                ${state.lastTradeMessage}
+            </div>
+        `;
     }
 
-    function restartGame(){
-      clearSavedGame();
-      resetState();
-      closeNarrativeModal();
-      endingModal.classList.add('hidden');
-      endingModal.innerHTML = '';
-      gameScreen.classList.add('hidden');
-      startScreen.classList.remove('hidden');
-      renderStart();
-    }
+    html+=`<div class="market-grid">`;
 
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('button');
-      if(!btn) return;
+    items.forEach(item=>{
+        const good=GOODS[item];
+        const own=state.inventory[item] || 0;
+        const local=good.origin===state.currentStep;
+        const needed=step.needs.includes(item);
+        const bPrice=buyPrice(item);
+        const sPrice=sellPrice(item);
+        const canBuy=state.money>=bPrice;
+        const canSell=own>0;
 
-      if(btn.dataset.role){
-        selectRole(btn.dataset.role);
-        return;
-      }
+        html+=`
+            <div class="goods-card">
+                <div class="goods-head">
+                    <div class="goods-name">${good.icon} ${item}</div>
+                    <span class="tag">${local ? "本地特产" : needed ? "本地急需" : "外来物资"}</span>
+                </div>
 
-      if(btn.dataset.continue){
-        loadSavedGame();
-        return;
-      }
+                <div class="goods-meta">
+                    ${good.type}<br>
+                    <strong>当前持有：${own}</strong><br>
+                    买入：<strong style="color:#9f2f24;">-${bPrice} 钱</strong>｜
+                    卖出：<strong style="color:#3b7a68;">+${sPrice} 钱</strong><br>
+                    ${good.desc}
+                </div>
 
-      if(btn.id === 'restartBtn' || btn.dataset.restart){
-        restartGame();
-        return;
-      }
+                <div class="goods-actions">
+                    <button class="small-btn"
+                            onclick="buyItem('${item}')"
+                            ${canBuy ? "" : "disabled"}>
+                        买入 1 件<br>
+                        <small>资金 ${state.money} → ${state.money-bPrice}</small>
+                    </button>
 
-      if(btn.dataset.closeModal){
-        closeNarrativeModal();
-        if(maybeWin()) return;
-        checkFail();
-        return;
-      }
+                    <button class="small-btn sell"
+                            onclick="sellItem('${item}')"
+                            ${canSell ? "" : "disabled"}>
+                        卖出 1 件<br>
+                        <small>资金 ${state.money} → ${state.money+sPrice}</small>
+                    </button>
+                </div>
 
-      if(btn.dataset.tab){
-        ui.activeTab = btn.dataset.tab;
-        renderGame();
-        return;
-      }
-
-      if(btn.dataset.buy){
-        buyItem(btn.dataset.buy);
-        return;
-      }
-
-      if(btn.dataset.sell){
-        sellItem(btn.dataset.sell);
-        return;
-      }
-
-      if(btn.dataset.travel){
-        travelTo(Number(btn.dataset.travel));
-        return;
-      }
-
-      if(btn.dataset.culture){
-        chooseCulture(Number(btn.dataset.culture));
-        return;
-      }
-
-      if(btn.dataset.rest){
-        restCamp(btn.dataset.rest);
-        return;
-      }
-
-      if(btn.dataset.submitOrder){
-        submitOrder(btn.dataset.submitOrder);
-        return;
-      }
-
-      if(btn.dataset.eventChoice){
-        chooseEvent(Number(btn.dataset.eventChoice));
-        return;
-      }
+                ${
+                    !canBuy
+                    ? `<div class="goods-meta" style="color:#9f2f24;margin-top:8px;">资金不足，暂时无法买入。</div>`
+                    : ""
+                }
+            </div>
+        `;
     });
 
-    renderStart();
-  </script>
+    html+=`
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+            <button class="btn ghost" onclick="closeModal()">返回</button>
+        </div>
+    `;
+
+    showModal(html);
+}
+
+function buyItem(item){
+    const price=buyPrice(item);
+
+    if(state.money<price){
+        state.lastTradeMessage=`资金不足，无法买入 <strong>${GOODS[item].icon} ${item}</strong>。`;
+        openMarket();
+        return;
+    }
+
+    const beforeMoney=state.money;
+
+    state.money -= price;
+    state.inventory[item]=(state.inventory[item] || 0)+1;
+    increaseFusionByTrade();
+
+    state.lastTradeMessage=
+        `你买入了 <strong>${GOODS[item].icon} ${item}</strong>：
+        资金 <strong>${beforeMoney}</strong> → <strong>${state.money}</strong> 钱，
+        交融度 <strong>+1</strong>。`;
+
+    addLog(`你买入了 ${item}，资金 ${beforeMoney} → ${state.money}，交融度 +1。`);
+
+    recordMarketTradeAndMaybeEvent();
+    renderGame();
+    openMarket();
+}
+
+function sellItem(item){
+    if(!state.inventory[item]){
+        state.lastTradeMessage=`你没有 <strong>${GOODS[item].icon} ${item}</strong>，无法卖出。`;
+        openMarket();
+        return;
+    }
+
+    const price=sellPrice(item);
+    const beforeMoney=state.money;
+    const origin=GOODS[item].origin;
+    const needed=STEPS[state.currentStep].needs.includes(item);
+
+    state.inventory[item] -= 1;
+    state.money += price;
+    increaseFusionByTrade();
+
+    let reason="";
+    if(origin!==state.currentStep && needed){
+        reason=`这正是${STEPS[state.currentStep].geography}急需的物资，所以卖价更高。`;
+    }else if(origin!==state.currentStep){
+        reason=`这是外来物资，具有一定交换价值。`;
+    }else{
+        reason=`这是本地物产，卖价较低。`;
+    }
+
+    state.lastTradeMessage=
+        `你卖出了 <strong>${GOODS[item].icon} ${item}</strong>：
+        资金 <strong>${beforeMoney}</strong> → <strong>${state.money}</strong> 钱，
+        交融度 <strong>+1</strong>。${reason}`;
+
+    addLog(`你卖出了 ${item}，资金 ${beforeMoney} → ${state.money}，交融度 +1。`);
+
+    recordMarketTradeAndMaybeEvent();
+    renderGame();
+    openMarket();
+}
+
+function openTravel(){
+    let html=`
+        <h2>组建商队探索</h2>
+        <p>
+            远行需要准备粮秣、向导和驮畜。你可以消耗 18 钱，或消耗 1 份粮食抵扣部分旅费。
+            只有真正跨越三个阶梯，并在三个阶梯都完成文化交流，才有可能通关。
+        </p>
+        <div class="travel-grid">
+    `;
+
+    Object.values(STEPS).forEach(step=>{
+        const current=step.id===state.currentStep;
+        html+=`
+            <div class="travel-card">
+                <h3>${step.name}</h3>
+                <p>${step.geography}</p>
+                <p><strong>${step.people}</strong>｜${step.style}</p>
+                <button class="btn ${current ? "ghost" : ""}"
+                        onclick="travelTo(${step.id})"
+                        ${current ? "disabled" : ""}>
+                    ${current ? "当前所在地" : "前往此地"}
+                </button>
+            </div>
+        `;
+    });
+
+    html+=`
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+            <button class="btn ghost" onclick="closeModal()">返回</button>
+        </div>
+    `;
+
+    showModal(html);
+}
+
+function travelTo(stepId){
+    if(stepId===state.currentStep) return;
+
+    let cost=18;
+    let usedFood=false;
+
+    if((state.inventory["粮食"] || 0)>0){
+        state.inventory["粮食"] -= 1;
+        cost=8;
+        usedFood=true;
+    }
+
+    if(state.money<cost){
+        showModal(`
+            <h2>旅费不足</h2>
+            <p>
+                商队需要至少 ${cost} 钱来准备路费、向导与驮畜。
+                你可以先在当前集市出售物资，或购买、保留粮食来降低旅途成本。
+            </p>
+            <button class="btn" onclick="state.lastTradeMessage=''; openMarket()">去市场</button>
+            <button class="btn ghost" onclick="openTravel()">返回</button>
+        `);
+        return;
+    }
+
+    state.money -= cost;
+    state.currentStep=stepId;
+    state.turn += 1;
+    state.visited[stepId]=true;
+    state.lastTradeMessage="";
+
+    addLog(`商队抵达${STEPS[stepId].geography}。${usedFood ? "途中消耗 1 份粮食，" : ""}旅费支出 ${cost} 钱。`);
+
+    closeModal();
+    renderGame();
+
+    setTimeout(()=>{
+        showModal(`
+            <h2>抵达新市镇</h2>
+            <p>${STEPS[stepId].needText}</p>
+            <div class="goal-box">
+                提示：在这个阶梯的市场中进行买卖，也会随机触发 2—3 次与民族交往交流交融有关的历史事件卡片。
+            </div>
+            <button class="btn" onclick="closeModal()">进入市镇</button>
+        `);
+    },600);
+}
+
+function openCulture(){
+    const step=STEPS[state.currentStep];
+    const alreadyLearned=state.cultureRecords[state.currentStep];
+
+    const avatarMap={
+        1:"🏔️",
+        2:"🐎",
+        3:HAN_BUILDING_ICON
+    };
+
+    const otherNeeds=step.needs.map(n=>`${GOODS[n].icon} ${n}`).join("、");
+
+    let html=`
+        <h2>文化交流</h2>
+        <div class="dialogue">
+            <div class="avatar">${avatarMap[state.currentStep]}</div>
+            <div class="dialogue-text">
+                <strong>${step.people}长者说道：</strong><br>
+                “这里是${step.geography}。我们的生活依托${step.style}，本地有${step.products.join("、")}。
+                可是山河辽阔，一地不能拥有全部物产。我们需要${otherNeeds}。
+                真正长久的道路，不只是买卖，更是理解彼此为何需要这些物资。”
+            </div>
+        </div>
+    `;
+
+    if(alreadyLearned){
+        html+=`
+            <div class="needs-box">
+                你已经在这里完成过文化交流。本次可以复习知识，但不会重复计入通关进度。
+                <br><br>
+                当前文化交流进度：${getCultureCount()}/3。
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+                <button class="btn ghost" onclick="closeModal()">返回</button>
+            </div>
+        `;
+    }else{
+        html+=`
+            <div class="choice-list">
+                <button class="choice" onclick="cultureChoice()">
+                    完成文化交流：记录当地需求，学习礼俗，并理解物产差异背后的地理原因
+                </button>
+            </div>
+        `;
+    }
+
+    showModal(html);
+}
+
+function cultureChoice(){
+    if(state.cultureRecords[state.currentStep]){
+        addLog(`你已经在${STEPS[state.currentStep].geography}完成过文化交流，本次不再计入通关进度。`);
+        closeModal();
+        renderGame();
+        return;
+    }
+
+    state.cultureRecords[state.currentStep]=true;
+    state.money += 10;
+
+    addLog(`你在${STEPS[state.currentStep].geography}完成文化交流，理解了当地物产与需求背后的地理原因。文化交流进度 ${getCultureCount()}/3，互信收益 +10 钱。`);
+
+    closeModal();
+    renderGame();
+}
+
+function getFinalComment(){
+    const goodHistoryCount = state.historyEvents.filter(e => e.good).length;
+    const visitedCount = getVisitedCount();
+    const cultureCount = getCultureCount();
+
+    if(state.money >= 1400 && goodHistoryCount >= 6 && visitedCount >= 3 && cultureCount >= 3){
+        return "优秀：你不仅完成了三级阶梯之间的物资流通，还能在历史事件中多次选择有利于互信、互市、共居和文化理解的做法。你的路线体现了从物质互补到文化认同的完整过程。";
+    }
+
+    if(state.money >= 1000 && visitedCount >= 3 && cultureCount >= 3){
+        return "良好：你完成了跨越三个阶梯的贸易旅程，也在每个阶梯进行了文化交流。你已经理解，不同地理环境造成物产差异，而长期互通有无推动了各民族交往交流交融。";
+    }
+
+    return "达成：你完成了共同体之路的基本目标。接下来可以尝试更多跨阶梯贸易，并在历史事件中选择更能体现互信、合作与文化尊重的做法。";
+}
+
+function showSettlement(){
+    document.getElementById("finalMoney").textContent = state.money;
+    document.getElementById("finalFusion").textContent = state.fusion;
+    document.getElementById("finalVisited").textContent = `${getVisitedCount()}/3`;
+    document.getElementById("finalCulture").textContent = `${getCultureCount()}/3`;
+
+    document.getElementById("finalComment").textContent = getFinalComment();
+
+    const badges = [];
+
+    if(getVisitedCount() >= 3){
+        badges.push("走遍三级阶梯");
+    }
+    if(getCultureCount() >= 3){
+        badges.push("完成三地文化交流");
+    }
+    if(state.money >= 1000){
+        badges.push("商队资金达标");
+    }
+    if(state.historyEvents.filter(e => e.good).length >= 3){
+        badges.push("历史事件选择稳健");
+    }
+    if(state.fusion >= 50){
+        badges.push("交融意识明显提升");
+    }
+
+    document.getElementById("finalBadges").innerHTML =
+        badges.length
+            ? badges.map(b => `<span class="result-badge">${b}</span>`).join("")
+            : `<span class="result-badge">完成基础旅程</span>`;
+
+    const historyBox = document.getElementById("finalHistoryEvents");
+
+    if(state.historyEvents.length === 0){
+        historyBox.innerHTML = `
+            <div class="result-item">
+                本次旅程没有触发历史事件。可以在每个阶梯多进行几次市场交易，体验榷场互市、茶马互市、丝绸之路、屯垦戍边等历史事件。
+            </div>
+        `;
+    }else{
+        historyBox.innerHTML = state.historyEvents.map(e => `
+            <div class="result-item ${e.good ? "good" : ""}">
+                <strong>“${e.title}”</strong>｜${e.stepName}｜${e.placeName}<br>
+                ${e.good ? "选择结果：积极交流" : "选择结果：仍需改进"}｜
+                互信收益：${e.reward} 钱<br>
+                ${e.result}
+            </div>
+        `).join("");
+    }
+
+    const logs = state.logs.slice().reverse();
+
+    document.getElementById("finalLogs").innerHTML =
+        logs.length
+            ? logs.map(log => `<div class="result-item">${log}</div>`).join("")
+            : `<div class="result-item">暂无旅行日志。</div>`;
+
+    showScreen("settlementScreen");
+}
+
+window.addEventListener("resize",renderGame);
+</script>
 </body>
 </html>
