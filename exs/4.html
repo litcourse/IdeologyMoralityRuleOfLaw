@@ -213,6 +213,58 @@ body::before{
     color:#6d481c;
     font-weight:700;
 }
+.player-name-box{
+    margin:20px 0 22px;
+    padding:18px;
+    border-radius:22px;
+    background:rgba(255,255,255,.62);
+    border:1px solid rgba(80,55,28,.16);
+    box-shadow:0 12px 28px rgba(60,40,20,.10);
+}
+.player-name-box label{
+    display:block;
+    font-weight:900;
+    margin-bottom:8px;
+}
+.player-name-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+.player-name-input{
+    flex:1;
+    min-width:220px;
+    border:1px solid rgba(80,55,28,.20);
+    border-radius:16px;
+    padding:13px 14px;
+    font-size:17px;
+    font-weight:800;
+    color:var(--ink);
+    background:rgba(255,255,255,.82);
+    outline:none;
+}
+.player-name-input:focus{
+    border-color:rgba(59,122,104,.55);
+    box-shadow:0 0 0 4px rgba(59,122,104,.10);
+}
+.player-name-tip{
+    margin-top:8px;
+    color:var(--ink-soft);
+    font-size:13px;
+    line-height:1.6;
+}
+.player-profile{
+    margin:18px 0 6px;
+    padding:18px;
+    border-radius:22px;
+    background:rgba(59,122,104,.08);
+    border:1px solid rgba(59,122,104,.18);
+    text-align:left;
+}
+.player-profile strong{
+    color:#28584d;
+}
 .topbar{
     display:grid;
     grid-template-columns:1.3fr 1.5fr 1.2fr;
@@ -548,6 +600,26 @@ body::before{
     color:var(--ink);
 }
 .choice:hover{background:rgba(255,255,255,.88)}
+.choice:disabled{
+    opacity:.48;
+    cursor:not-allowed;
+    background:rgba(255,255,255,.46);
+}
+.event-cooldown{
+    margin-top:12px;
+    padding:10px 12px;
+    border-radius:14px;
+    background:rgba(159,47,36,.08);
+    border:1px solid rgba(159,47,36,.18);
+    color:#7a2a21;
+    font-weight:800;
+    line-height:1.6;
+}
+.anti-mistouch-ready{
+    background:rgba(59,122,104,.09);
+    border-color:rgba(59,122,104,.22);
+    color:#28584d;
+}
 .ending{
     text-align:center;
     padding:42px 34px;
@@ -644,6 +716,25 @@ body::before{
     line-height:1.9;
     color:var(--ink);
 }
+
+.save-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:12px;
+}
+.save-actions .btn{
+    padding:9px 12px;
+    border-radius:12px;
+    font-size:13px;
+}
+.save-tip{
+    margin-top:8px;
+    font-size:12px;
+    line-height:1.5;
+    color:var(--ink-soft);
+}
+
 @media(max-width:900px){
     .identity-grid,.topbar,.main-layout,.market-grid,.travel-grid,.action-grid,.market-status,.result-grid{
         grid-template-columns:1fr;
@@ -695,8 +786,15 @@ body::before{
         <div class="seal">选择你的出生地与民族身份</div>
         <h1 class="title">你从哪里出发？</h1>
         <p class="subtitle">
-            不同身份拥有不同初始物资、需求和贸易优势。请选择一个角色，系统会根据你的出生地分配初始资金与背包。
+            不同身份拥有不同初始物资、需求和贸易优势。请先输入自己的姓名，再选择一个角色，系统会根据你的出生地分配初始资金与背包。
         </p>
+        <div class="player-name-box">
+            <label for="playerNameInput">商人姓名</label>
+            <div class="player-name-row">
+                <input id="playerNameInput" class="player-name-input" type="text" maxlength="12" placeholder="请输入自己的姓名" autocomplete="off" />
+            </div>
+            <div class="player-name-tip">请输入自己的姓名，姓名会显示在游戏主界面和最终成果结算中。</div>
+        </div>
         <div class="identity-grid" id="identityGrid"></div>
     </div>
 </section>
@@ -704,6 +802,8 @@ body::before{
 <section id="gameScreen" class="screen">
     <div class="topbar">
         <div class="stat-card">
+            <div class="stat-title">商人姓名</div>
+            <div class="stat-value" id="playerNameText">未命名商人</div>
             <div class="stat-title">当前位置</div>
             <div class="stat-value" id="currentLocation">—</div>
             <div class="stat-title" id="currentPeople">—</div>
@@ -721,6 +821,12 @@ body::before{
             <div class="stat-value"><span id="moneyText">0</span> 钱</div>
             <div class="stat-title">行程：第 <span id="turnText">1</span> 回合</div>
             <div class="stat-title" id="goalText">目标进度：—</div>
+            <div class="save-actions">
+                <button class="btn ghost" onclick="exportSaveFile()">导出存档</button>
+                <button class="btn ghost" onclick="openImportSave()">导入存档</button>
+            </div>
+            <div class="save-tip">存档为本地 JSON 文件，可跨设备导入继续游戏。</div>
+            <input id="saveFileInput" type="file" accept="application/json,.json" style="display:none" onchange="importSaveFile(event)" />
         </div>
     </div>
 
@@ -806,6 +912,12 @@ body::before{
         <p style="text-align:center;">
             这不是一次简单的买卖记录，而是一条从物产交换走向文化理解的学习路线。
         </p>
+
+        <div class="player-profile">
+            <div><strong>商人姓名：</strong><span id="finalPlayerName">未命名商人</span></div>
+            <div><strong>出发身份：</strong><span id="finalIdentity">—</span></div>
+            <div><strong>出发地点：</strong><span id="finalStartPlace">—</span></div>
+        </div>
 
         <div class="result-grid">
             <div class="result-card">
@@ -967,7 +1079,8 @@ const MARKET_HISTORY_EVENTS = {
             question: "面对茶马互市，哪种做法最能促进各民族交流交往交融？",
             choices: [
                 { text: "公平交换茶叶、马匹、药材，让各地生活需求得到满足。", good: true, result: "你理解了茶马互市的核心：不同地区因物产差异而互通有无。" },
-                { text: "只把茶叶卖得越贵越好，不关心高原地区的真实需求。", good: false, result: "你只看到了短期利益，没有理解贸易背后的生活互补关系。" }
+                { text: "只把茶叶卖得越贵越好，不关心高原地区的真实需求。", good: false, result: "你只看到了短期利益，没有理解贸易背后的生活互补关系。" },
+                { text: "只把茶叶作为本地礼品少量赠送，不建立稳定互市关系。", good: false, result: "礼品往来有助于表达善意，但没有稳定互市，就难以长期满足不同地区的生活需求。" }
             ],
             moneyReward: 20
         },
@@ -978,7 +1091,8 @@ const MARKET_HISTORY_EVENTS = {
             question: "如果你是随行商旅，怎样做更能体现文化交流？",
             choices: [
                 { text: "尊重当地习俗，同时介绍中原医药、农作和工艺知识。", good: true, result: "你推动了技术、生活经验与礼俗的交流。" },
-                { text: "只运送货物，不愿了解当地语言、礼仪和生活方式。", good: false, result: "货物可以到达远方，但缺少理解就难以形成深层认同。" }
+                { text: "只运送货物，不愿了解当地语言、礼仪和生活方式。", good: false, result: "货物可以到达远方，但缺少理解就难以形成深层认同。" },
+                { text: "只记录中原技术的优点，不主动学习高原地区的生活经验。", good: false, result: "单向介绍不等于真正交流，互相学习才能形成更深层的理解。" }
             ],
             moneyReward: 20
         },
@@ -989,7 +1103,8 @@ const MARKET_HISTORY_EVENTS = {
             question: "商队经过唐蕃古道时，怎样能让交流更持久？",
             choices: [
                 { text: "记录沿途见闻，学习当地称谓、礼俗和交易规则。", good: true, result: "你把道路变成了知识与情感交流的通道。" },
-                { text: "只选择最赚钱的买卖，不与当地人建立长期关系。", good: false, result: "没有长期互信，商路就难以稳定。" }
+                { text: "只选择最赚钱的买卖，不与当地人建立长期关系。", good: false, result: "没有长期互信，商路就难以稳定。" },
+                { text: "只在道路沿线设补给点，不记录各地风俗和交往经验。", good: false, result: "补给点能保障通行，但忽视风俗与规则，交流就容易停留在运输层面。" }
             ],
             moneyReward: 20
         }
@@ -1002,7 +1117,8 @@ const MARKET_HISTORY_EVENTS = {
             question: "在榷场交易时，哪种做法最能促进稳定交流？",
             choices: [
                 { text: "遵守市价和规则，让粮食、茶叶、马匹、皮毛有序流通。", good: true, result: "你维护了稳定互市，也让不同地区形成利益联系。" },
-                { text: "故意制造缺货，哄抬价格，让别人难以获得急需物资。", good: false, result: "这种做法会破坏互信，不利于长期交往。" }
+                { text: "故意制造缺货，哄抬价格，让别人难以获得急需物资。", good: false, result: "这种做法会破坏互信，不利于长期交往。" },
+                { text: "只和熟悉的商队交易，不让其他族群进入市场。", good: false, result: "熟人交易较安全，但排斥其他群体会削弱互市的开放性和稳定性。" }
             ],
             moneyReward: 20
         },
@@ -1013,7 +1129,8 @@ const MARKET_HISTORY_EVENTS = {
             question: "面对农牧物产差异，最合理的选择是？",
             choices: [
                 { text: "把粮食、铁器带到草原山地，再把马匹、皮毛带回农耕区。", good: true, result: "你抓住了农牧互补的历史逻辑。" },
-                { text: "认为只有本地物产重要，拒绝外来商品。", good: false, result: "封闭会削弱互补，也会限制生活改善。" }
+                { text: "认为只有本地物产重要，拒绝外来商品。", good: false, result: "封闭会削弱互补，也会限制生活改善。" },
+                { text: "只在灾荒时临时交换粮食，不建立平时的互通渠道。", good: false, result: "临时交换能应急，但稳定渠道更能体现农牧长期互补。" }
             ],
             moneyReward: 20
         },
@@ -1024,7 +1141,8 @@ const MARKET_HISTORY_EVENTS = {
             question: "看到苗族银饰工艺时，你会怎样做？",
             choices: [
                 { text: "尊重并介绍这种工艺，让更多地区认识山地民族的审美与技艺。", good: true, result: "你让商品成为文化被理解的媒介。" },
-                { text: "只按金属重量估价，不关心它的民族文化含义。", good: false, result: "忽视文化价值，会让交流停留在浅层买卖。" }
+                { text: "只按金属重量估价，不关心它的民族文化含义。", good: false, result: "忽视文化价值，会让交流停留在浅层买卖。" },
+                { text: "只收藏银饰作为稀罕物，不了解它背后的习俗和工艺传承。", good: false, result: "收藏能保存物件，但不理解习俗与技艺，就难以实现真正的文化交流。" }
             ],
             moneyReward: 20
         }
@@ -1037,7 +1155,8 @@ const MARKET_HISTORY_EVENTS = {
             question: "在丝绸之路上，怎样才能让商路成为交流之路？",
             choices: [
                 { text: "带去丝绸、瓷器，也学习沿途的语言、音乐、饮食和习俗。", good: true, result: "你理解了丝绸之路不仅运送商品，也沟通文化。" },
-                { text: "只把沿途看作赚钱地点，不记录任何文化见闻。", good: false, result: "这样只能完成买卖，难以形成更深层的理解。" }
+                { text: "只把沿途看作赚钱地点，不记录任何文化见闻。", good: false, result: "这样只能完成买卖，难以形成更深层的理解。" },
+                { text: "只把最精美的丝绸卖到远方，不关注使节、商旅和族群往来。", good: false, result: "商品远行只是表层，更重要的是道路上人与文化的持续相遇。" }
             ],
             moneyReward: 20
         },
@@ -1048,7 +1167,8 @@ const MARKET_HISTORY_EVENTS = {
             question: "屯垦戍边中，哪种做法更能促进共同生活？",
             choices: [
                 { text: "共同修渠、耕作、守边，在生产协作中建立邻里关系。", good: true, result: "你理解了共居、共事、共学对民族交融的重要作用。" },
-                { text: "只修自己的田地，不与当地各族合作。", good: false, result: "缺少生产协作，就难以形成稳定共同体。" }
+                { text: "只修自己的田地，不与当地各族合作。", good: false, result: "缺少生产协作，就难以形成稳定共同体。" },
+                { text: "只派人守边，不参与当地水利、耕作和集市生活。", good: false, result: "守边很重要，但脱离生产生活协作，就难以形成共同生活联系。" }
             ],
             moneyReward: 20
         },
@@ -1059,14 +1179,19 @@ const MARKET_HISTORY_EVENTS = {
             question: "作为第三阶梯商人，你怎样安排贸易更合理？",
             choices: [
                 { text: "把茶叶、铁器、粮食带到急需地区，再带回马匹、皮毛和藏药。", good: true, result: "你把农耕核心区与高原、草原山地连接起来。" },
-                { text: "只在本地低买低卖，不愿承担跨区域运输。", good: false, result: "不跨区域流动，就难以体现三级阶梯之间的互补。" }
+                { text: "只在本地低买低卖，不愿承担跨区域运输。", good: false, result: "不跨区域流动，就难以体现三级阶梯之间的互补。" },
+                { text: "只把中原物资送出去，不了解边疆地区回流的马匹、皮毛和药材价值。", good: false, result: "单向输出不能体现互补，双向流动才更符合边地市场的历史逻辑。" }
             ],
             moneyReward: 20
         }
     ]
 };
 
+let marketScrollTop = 0;
+let historyChoiceCooldownTimer = null;
+
 let state = {
+    playerName: "未命名商人",
     currentStep: 1,
     identity: null,
     money: 0,
@@ -1092,6 +1217,144 @@ function showScreen(id){
 function showIdentityScreen(){
     renderIdentities();
     showScreen("identityScreen");
+}
+
+
+function getSaveSnapshot(){
+    return {
+        saveType: "stairTradeGameSave",
+        version: 1,
+        savedAt: new Date().toISOString(),
+        state: JSON.parse(JSON.stringify(state))
+    };
+}
+
+function makeSafeFileName(name){
+    const cleaned = String(name || "未命名商人")
+        .replace(/[\\/:*?"<>|\s]+/g,"_")
+        .replace(/^_+|_+$/g,"")
+        .slice(0,20);
+    return cleaned || "未命名商人";
+}
+
+function exportSaveFile(){
+    if(!state || !state.identity){
+        alert("当前还没有可导出的游戏进度。请先开始游戏。");
+        return;
+    }
+
+    const snapshot = getSaveSnapshot();
+    const json = JSON.stringify(snapshot,null,2);
+    const blob = new Blob([json],{type:"application/json;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${makeSafeFileName(state.playerName)}_阶梯之路存档.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    state.lastTradeMessage = `已导出 <strong>${state.playerName || "未命名商人"}</strong> 的游戏存档。下次可点击“导入存档”继续。`;
+    addLog(`${state.playerName || "未命名商人"}导出了游戏存档。`);
+    renderGame();
+}
+
+function openImportSave(){
+    const input = document.getElementById("saveFileInput");
+    if(input){
+        input.value = "";
+        input.click();
+    }
+}
+
+function restoreStateFromSave(raw){
+    let parsed;
+    try{
+        parsed = JSON.parse(raw);
+    }catch(err){
+        throw new Error("存档文件不是有效的 JSON 格式。");
+    }
+
+    const savedState = parsed && parsed.state ? parsed.state : parsed;
+    if(!savedState || typeof savedState !== "object"){
+        throw new Error("存档内容为空或格式不正确。");
+    }
+
+    const requiredKeys = ["currentStep","money","inventory","fusion","turn","visited","logs","cultureRecords","historyEvents"];
+    const missing = requiredKeys.filter(key => !(key in savedState));
+    if(missing.length){
+        throw new Error(`存档缺少关键字段：${missing.join("、")}`);
+    }
+
+    const stepId = Number(savedState.currentStep);
+    if(!STEPS[stepId]){
+        throw new Error("存档中的当前位置无效。");
+    }
+
+    let identity = savedState.identity;
+    if(!identity || !identity.title || !identity.step){
+        identity = IDENTITIES.find(role => role.step === stepId) || IDENTITIES[0];
+    }else{
+        const matched = IDENTITIES.find(role => role.title === identity.title || role.step === identity.step);
+        if(matched){
+            identity = matched;
+        }
+    }
+
+    state = {
+        playerName: String(savedState.playerName || "未命名商人").slice(0,12),
+        currentStep: stepId,
+        identity,
+        money: Number(savedState.money) || 0,
+        inventory: savedState.inventory && typeof savedState.inventory === "object" ? savedState.inventory : {},
+        fusion: Number(savedState.fusion) || 0,
+        turn: Number(savedState.turn) || 1,
+        visited: savedState.visited && typeof savedState.visited === "object" ? savedState.visited : { [stepId]: true },
+        logs: Array.isArray(savedState.logs) ? savedState.logs.slice(0,18) : [],
+        cultureRecords: savedState.cultureRecords && typeof savedState.cultureRecords === "object" ? savedState.cultureRecords : {},
+        lastTradeMessage: "已成功导入存档，可以继续游戏。",
+        marketTradeCount: savedState.marketTradeCount && typeof savedState.marketTradeCount === "object" ? savedState.marketTradeCount : {},
+        marketEventTargets: savedState.marketEventTargets && typeof savedState.marketEventTargets === "object" ? savedState.marketEventTargets : {},
+        marketEventTriggered: savedState.marketEventTriggered && typeof savedState.marketEventTriggered === "object" ? savedState.marketEventTriggered : {},
+        marketEventUsedTitles: savedState.marketEventUsedTitles && typeof savedState.marketEventUsedTitles === "object" ? savedState.marketEventUsedTitles : {},
+        historyEvents: Array.isArray(savedState.historyEvents) ? savedState.historyEvents : []
+    };
+
+    state.visited[state.currentStep] = true;
+}
+
+function importSaveFile(event){
+    const file = event.target.files && event.target.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e){
+        try{
+            restoreStateFromSave(e.target.result);
+            closeModal();
+            showScreen("gameScreen");
+            addLog(`${state.playerName || "未命名商人"}导入了游戏存档，继续阶梯之路。`);
+            renderGame();
+            alert("存档导入成功，已恢复游戏进度。");
+        }catch(err){
+            alert(`导入失败：${err.message}`);
+        }
+    };
+    reader.onerror = function(){
+        alert("导入失败：无法读取该文件。");
+    };
+    reader.readAsText(file,"utf-8");
+}
+
+function getPlayerNameFromInput(){
+    const input=document.getElementById("playerNameInput");
+    if(!input) return "未命名商人";
+    return input.value
+        .replace(/[<>`"'&]/g,"")
+        .replace(/\s+/g," ")
+        .trim()
+        .slice(0,12);
 }
 
 function renderIdentities(){
@@ -1120,8 +1383,17 @@ function renderIdentities(){
 }
 
 function startGame(index){
+    const playerName=getPlayerNameFromInput();
+    if(!playerName){
+        alert("请先输入自己的姓名，再选择身份开始旅程。");
+        const input=document.getElementById("playerNameInput");
+        if(input) input.focus();
+        return;
+    }
+
     const role=IDENTITIES[index];
     state={
+        playerName,
         currentStep: role.step,
         identity: role,
         money: role.money,
@@ -1138,7 +1410,7 @@ function startGame(index){
         marketEventUsedTitles: {},
         historyEvents: []
     };
-    addLog(`你选择成为“${role.title}”，带着本地物产踏上阶梯贸易之路。`);
+    addLog(`${playerName}选择成为“${role.title}”，带着本地物产踏上阶梯贸易之路。`);
     addLog(STEPS[role.step].needText);
     showScreen("gameScreen");
     renderGame();
@@ -1146,6 +1418,8 @@ function startGame(index){
 }
 
 function restartGame(){
+    const input=document.getElementById("playerNameInput");
+    if(input) input.value="";
     showScreen("startScreen");
 }
 
@@ -1174,6 +1448,7 @@ function getVictoryStatus(){
 function renderGame(){
     const step=STEPS[state.currentStep];
 
+    document.getElementById("playerNameText").textContent=state.playerName || "未命名商人";
     document.getElementById("currentLocation").textContent=`${step.name}：${step.geography}`;
     document.getElementById("currentPeople").textContent=`${step.people}｜${step.style}`;
     document.getElementById("fusionText").textContent=state.fusion;
@@ -1324,6 +1599,65 @@ function safeText(text){
         .replace(/\n/g,"");
 }
 
+function saveMarketScrollPosition(){
+    const modal=document.getElementById("modalContent");
+    if(modal && document.getElementById("marketGrid")){
+        marketScrollTop=modal.scrollTop || 0;
+    }
+}
+
+function restoreMarketScrollPosition(){
+    const modal=document.getElementById("modalContent");
+    if(!modal) return;
+    requestAnimationFrame(()=>{
+        modal.scrollTop=marketScrollTop;
+        requestAnimationFrame(()=>{
+            modal.scrollTop=marketScrollTop;
+        });
+    });
+}
+
+function startHistoryChoiceCooldown(seconds=3){
+    if(historyChoiceCooldownTimer){
+        clearInterval(historyChoiceCooldownTimer);
+        historyChoiceCooldownTimer=null;
+    }
+
+    const buttons=[...document.querySelectorAll(".history-choice")];
+    const notice=document.getElementById("historyChoiceCooldown");
+    let left=seconds;
+
+    buttons.forEach(btn=>{
+        btn.disabled=true;
+        btn.setAttribute("aria-disabled","true");
+    });
+
+    const updateNotice=()=>{
+        if(!notice) return;
+        notice.textContent=`防误触保护：请先阅读史实与题目，${left} 秒后才能选择。`;
+    };
+
+    updateNotice();
+    historyChoiceCooldownTimer=setInterval(()=>{
+        left -= 1;
+        if(left>0){
+            updateNotice();
+            return;
+        }
+
+        clearInterval(historyChoiceCooldownTimer);
+        historyChoiceCooldownTimer=null;
+        buttons.forEach(btn=>{
+            btn.disabled=false;
+            btn.removeAttribute("aria-disabled");
+        });
+        if(notice){
+            notice.textContent="现在可以选择答案。";
+            notice.classList.add("anti-mistouch-ready");
+        }
+    },1000);
+}
+
 function openStepHistoryEvent(stepId){
     const pool=MARKET_HISTORY_EVENTS[stepId] || [];
     if(pool.length===0) return;
@@ -1337,21 +1671,25 @@ function openStepHistoryEvent(stepId){
 
     const choices=shuffleArray(event.choices);
 
+    saveMarketScrollPosition();
     showModal(`
         <h2>${event.icon} ${event.title}</h2>
         <div class="goal-box">
             <strong>历史事实：</strong>${event.fact}
         </div>
         <p><strong>课堂思考：</strong>${event.question}</p>
+        <div class="event-cooldown" id="historyChoiceCooldown">
+            防误触保护：请先阅读史实与题目，3 秒后才能选择。
+        </div>
         <div class="choice-list">
-            <button class="choice" onclick="resolveMarketHistoryEvent(${event.moneyReward}, ${choices[0].good}, '${safeText(event.title)}', '${safeText(choices[0].result)}')">
-                ${choices[0].text}
-            </button>
-            <button class="choice" onclick="resolveMarketHistoryEvent(${event.moneyReward}, ${choices[1].good}, '${safeText(event.title)}', '${safeText(choices[1].result)}')">
-                ${choices[1].text}
-            </button>
+            ${choices.map(choice=>`
+                <button class="choice history-choice" disabled onclick="resolveMarketHistoryEvent(${event.moneyReward}, ${choice.good}, '${safeText(event.title)}', '${safeText(choice.result)}')">
+                    ${choice.text}
+                </button>
+            `).join("")}
         </div>
     `);
+    startHistoryChoiceCooldown(3);
 }
 
 function resolveMarketHistoryEvent(moneyReward, good, title, result){
@@ -1387,10 +1725,14 @@ function resolveMarketHistoryEvent(moneyReward, good, title, result){
 
     closeModal();
     renderGame();
-    setTimeout(openMarket,120);
+    setTimeout(()=>openMarket(true),120);
 }
 
 function closeModal(){
+    if(historyChoiceCooldownTimer){
+        clearInterval(historyChoiceCooldownTimer);
+        historyChoiceCooldownTimer=null;
+    }
     document.getElementById("modalMask").classList.remove("active");
 }
 
@@ -1422,7 +1764,7 @@ function openStoryIntro(){
         <div class="dialogue">
             <div class="avatar">${state.identity.icon}</div>
             <div class="dialogue-text">
-                <strong>你心中想到：</strong><br>
+                <strong>${state.playerName || "未命名商人"}心中想到：</strong><br>
                 我来自${step.geography}，这里生活着${step.people}，属于${step.style}。
                 我们拥有${step.products.join("、")}，但也有无法仅靠本地环境解决的需求。
                 ${step.needText}
@@ -1432,7 +1774,7 @@ function openStoryIntro(){
     `);
 }
 
-function openMarket(){
+function openMarket(restoreScroll=false){
     ensureMarketEventPlan(state.currentStep);
 
     const items=Object.keys(GOODS);
@@ -1481,7 +1823,7 @@ function openMarket(){
         `;
     }
 
-    html+=`<div class="market-grid">`;
+    html+=`<div class="market-grid" id="marketGrid">`;
 
     items.forEach(item=>{
         const good=GOODS[item];
@@ -1541,14 +1883,20 @@ function openMarket(){
     `;
 
     showModal(html);
+    if(restoreScroll){
+        restoreMarketScrollPosition();
+    }else{
+        marketScrollTop=0;
+    }
 }
 
 function buyItem(item){
+    saveMarketScrollPosition();
     const price=buyPrice(item);
 
     if(state.money<price){
         state.lastTradeMessage=`资金不足，无法买入 <strong>${GOODS[item].icon} ${item}</strong>。`;
-        openMarket();
+        openMarket(true);
         return;
     }
 
@@ -1567,13 +1915,14 @@ function buyItem(item){
 
     recordMarketTradeAndMaybeEvent();
     renderGame();
-    openMarket();
+    openMarket(true);
 }
 
 function sellItem(item){
+    saveMarketScrollPosition();
     if(!state.inventory[item]){
         state.lastTradeMessage=`你没有 <strong>${GOODS[item].icon} ${item}</strong>，无法卖出。`;
-        openMarket();
+        openMarket(true);
         return;
     }
 
@@ -1604,7 +1953,7 @@ function sellItem(item){
 
     recordMarketTradeAndMaybeEvent();
     renderGame();
-    openMarket();
+    openMarket(true);
 }
 
 function openTravel(){
@@ -1761,19 +2110,27 @@ function getFinalComment(){
     const goodHistoryCount = state.historyEvents.filter(e => e.good).length;
     const visitedCount = getVisitedCount();
     const cultureCount = getCultureCount();
+    const baseFinished = state.money >= 1000 && visitedCount >= 3 && cultureCount >= 3;
 
-    if(state.money >= 1400 && goodHistoryCount >= 6 && visitedCount >= 3 && cultureCount >= 3){
-        return "优秀：你不仅完成了三级阶梯之间的物资流通，还能在历史事件中多次选择有利于互信、互市、共居和文化理解的做法。你的路线体现了从物质互补到文化认同的完整过程。";
+    // 等级只保留“优秀、良好、中等”三档。
+    // 交融度因为会随交易自然累积，区分度不足，因此只作为过程记录展示，不再参与等级判断。
+    if(baseFinished && state.money > 1600 && goodHistoryCount >= 6){
+        return "优秀：你不仅完成了三级阶梯之间的物资流通，还能在历史事件中多次作出有利于互信、互市、共居和文化理解的选择。你的路线体现了从物质互补到文化认同的完整过程。";
     }
 
-    if(state.money >= 1000 && visitedCount >= 3 && cultureCount >= 3){
-        return "良好：你完成了跨越三个阶梯的贸易旅程，也在每个阶梯进行了文化交流。你已经理解，不同地理环境造成物产差异，而长期互通有无推动了各民族交往交流交融。";
+    if(baseFinished && state.money >= 1200 && goodHistoryCount >= 4){
+        return "良好：你顺利完成了跨越三个阶梯的贸易旅程，并在历史事件中多次体现出尊重、合作与互通有无的意识。你已经较好理解了物产差异推动各民族交往交流交融的历史逻辑。";
     }
 
-    return "达成：你完成了共同体之路的基本目标。接下来可以尝试更多跨阶梯贸易，并在历史事件中选择更能体现互信、合作与文化尊重的做法。";
+    return "中等：你完成了共同体之路的基本目标，已经能够认识到不同地理环境造成物产差异，也理解了贸易和文化交流对中华民族共同体形成的重要作用。接下来可以尝试提高资金收益，并在更多历史事件中作出更稳健的选择。";
 }
 
 function showSettlement(){
+    const startStep = state.identity ? STEPS[state.identity.step] : null;
+    document.getElementById("finalPlayerName").textContent = state.playerName || "未命名商人";
+    document.getElementById("finalIdentity").textContent = state.identity ? state.identity.title : "—";
+    document.getElementById("finalStartPlace").textContent = startStep ? `${startStep.name}：${startStep.geography}` : "—";
+
     document.getElementById("finalMoney").textContent = state.money;
     document.getElementById("finalFusion").textContent = state.fusion;
     document.getElementById("finalVisited").textContent = `${getVisitedCount()}/3`;
@@ -1792,11 +2149,15 @@ function showSettlement(){
     if(state.money >= 1000){
         badges.push("商队资金达标");
     }
-    if(state.historyEvents.filter(e => e.good).length >= 3){
+    const goodHistoryCount = state.historyEvents.filter(e => e.good).length;
+    if(goodHistoryCount >= 3){
         badges.push("历史事件选择稳健");
     }
-    if(state.fusion >= 50){
-        badges.push("交融意识明显提升");
+    if(goodHistoryCount >= 6){
+        badges.push("历史理解表现突出");
+    }
+    if(state.money >= 1200){
+        badges.push("商队经营良好");
     }
 
     document.getElementById("finalBadges").innerHTML =
